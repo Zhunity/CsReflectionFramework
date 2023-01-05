@@ -32,9 +32,9 @@ namespace SMFrame.Editor.Refleaction
 			string statiPropertyStr = isStatic ? "static " : "virtual ";
 			string belong = isStatic ? gType.type.ToGetMethod() : "this";
 			string setBelong = isStatic ? "null" : "this.instance";
-			string declareName = LegalNameConfig.LegalName(GetDeclareName());
+			string declareName = GetDeclareName();
 			string protectedName = "r_" + declareName;
-			string publicName = declareName.StartsWith("R") ? declareName : "R" + declareName;
+			string publicName = "R" + declareName;
 			string paramStr = GetNewParamStr();
 			string result = @$"
 		/// <summary>

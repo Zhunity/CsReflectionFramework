@@ -23,7 +23,7 @@ namespace SMFrame.Editor.Refleaction
 
 		public override string GetDeclareName()
 		{
-			return @event.Name;
+			return LegalNameConfig.LegalName(@event.Name);
 		}
 
 		public override void GetDeclareStr(StringBuilder sb)

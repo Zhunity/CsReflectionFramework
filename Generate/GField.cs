@@ -24,7 +24,7 @@ namespace SMFrame.Editor.Refleaction
 
 		public override string GetDeclareName()
 		{
-			return field.Name;
+			return LegalNameConfig.LegalName( field.Name);
 		}
 
 		public override void GetDeclareStr(StringBuilder sb)

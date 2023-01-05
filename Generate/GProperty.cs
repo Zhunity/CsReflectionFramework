@@ -39,7 +39,7 @@ namespace SMFrame.Editor.Refleaction
 		{
 			var method = property.GetMethod == null ? property.SetMethod : property.GetMethod;
 			string paramStr = GMethod.GetMethodName(method);
-			paramStr = paramStr.Replace("Rget_", "").Replace("Rset_", "");
+			paramStr = paramStr.Replace("get_", "").Replace("set_", "");
 			return paramStr;
 		}
 

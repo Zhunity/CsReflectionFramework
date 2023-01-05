@@ -87,8 +87,8 @@ namespace SMFrame.Editor.Refleaction
 					paramStr += "_Ref_" + name;
 				}
 			}
-			paramStr = "R" + paramStr;
-			return paramStr;
+
+			return LegalNameConfig.LegalName( paramStr);
 		}
 
 		public string GenerateMethodInvoke()
@@ -205,7 +205,7 @@ namespace SMFrame.Editor.Refleaction
 {outDefaultStr}
             var ___genericsType = new Type[] {{{genricArgsStr}}};
             var ___parameters = new object[]{{{paramStr}}};
-            var ___result = {name}.Invoke(___genericsType, ___parameters);
+            var ___result = R{name}.Invoke(___genericsType, ___parameters);
 {outAssignStr}
             {returnStr}
         }}

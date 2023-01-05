@@ -42,7 +42,7 @@ namespace SMFrame.Editor.Refleaction
 
 			foreach (Type tpc in tpConstraints)
 			{
-				if (tpc == typeof(ValueType))
+				if (tpc == typeof(ValueType) || !tpc.IsPublic())
 				{
 					continue;
 				}

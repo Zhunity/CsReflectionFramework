@@ -38,6 +38,13 @@ namespace SMFrame.Editor.Refleaction
 		static private string GetPropertyName(PropertyInfo property)
 		{
 			var method = property.GetMethod == null ? property.SetMethod : property.GetMethod;
+			var parameters = method.GetParameters();
+			// 因为get/set函数名字可能被加密了，导致最终的名字和property.name不一样
+			if(parameters.Length <= 0)
+			{
+				return LegalNameConfig.LegalName(property.Name);
+			}
+
 			string paramStr = GMethod.GetMethodName(method);
 			paramStr = paramStr.Replace("get_", "").Replace("set_", "");
 			return paramStr;

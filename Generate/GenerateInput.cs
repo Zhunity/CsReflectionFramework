@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
+#endif
 
 namespace SMFrame.Editor.Refleaction
 {
@@ -32,10 +34,12 @@ namespace SMFrame.Editor.Refleaction
 			while (_waitToGenerate.Count > 0)
 			{
 				i++;
+#if UNITY_EDITOR
 				if (EditorUtility.DisplayCancelableProgressBar("生成文件", $"已生成{i}， 剩余{_waitToGenerate.Count}", (float)i / (float)_waitToGenerate.Count))
 				{
 					break;
 				}
+#endif
 				Type type = _waitToGenerate.Dequeue();
 				try
 				{
@@ -48,13 +52,17 @@ namespace SMFrame.Editor.Refleaction
 				}
 				catch (Exception e)
 				{
+					#if UNITY_EDITOR
 					Debug.LogError(type + "\n" + e.ToString());
+#endif
 				}
 			}
+#if UNITY_EDITOR
 			EditorUtility.ClearProgressBar();
+#endif
 		}
 
-		#region 生成单个
+#region 生成单个
 		public static void Generate(Type classType, bool refType = true)
 		{
 			_waitToGenerate.Clear();
@@ -67,7 +75,9 @@ namespace SMFrame.Editor.Refleaction
 				GenerateClasses();
 			}
 			LegalNameConfig.SaveReplace(jsonFile);
+#if UNITY_EDITOR
 			AssetDatabase.Refresh();
+#endif
 		}
 
 		public static void Generate<T>()
@@ -84,9 +94,9 @@ namespace SMFrame.Editor.Refleaction
 		{
 			Generate(instance.GetType());
 		}
-		#endregion
+#endregion
 
-		#region 生成多个
+#region 生成多个
 		public static void Generate(IEnumerable<Type> types)
 		{
 			ClearGenerateDirectory();
@@ -100,7 +110,9 @@ namespace SMFrame.Editor.Refleaction
 			}
 			GenerateClasses();
 			LegalNameConfig.SaveReplace(jsonFile);
+#if UNITY_EDITOR
 			AssetDatabase.Refresh();
+#endif
 		}
 
 		public static void Generate(IEnumerable<string> types)
@@ -116,7 +128,9 @@ namespace SMFrame.Editor.Refleaction
 			}
 			GenerateClasses();
 			LegalNameConfig.SaveReplace(jsonFile);
+#if UNITY_EDITOR
 			AssetDatabase.Refresh();
+#endif
 		}
 
 		public static void Generate(IEnumerable<object> objs)
@@ -145,14 +159,16 @@ namespace SMFrame.Editor.Refleaction
 			}
 			GenerateClasses();
 			LegalNameConfig.SaveReplace(jsonFile);
+#if UNITY_EDITOR
 			AssetDatabase.Refresh();
+#endif
 		}
-		#endregion
+#endregion
 
 		public static void GenerateInternal(Type classType, bool refType = true)
 		{
 			classType = classType.ToBasicType();
-			GType gType = new(classType);
+			GType gType = new GType(classType);
 			if(refType)
 			{
 				var types = gType.GetRefTypes();
@@ -182,7 +198,7 @@ namespace SMFrame.Editor.Refleaction
 		private static string GetPath(Type classType)
 		{
 			string path = classType.FullName.Replace(classType.Name, "");
-			var nameSpaceSplits = path.Split(".");
+			var nameSpaceSplits = path.Split('.');
 			string result = GenerateDirectory;
 			for(int i = 0; i < nameSpaceSplits.Length; i ++)
 			{
@@ -191,7 +207,7 @@ namespace SMFrame.Editor.Refleaction
 				{
 					continue;
 				}
-				var nestedTypeSplits = nameSpaceSplit.Split("+");
+				var nestedTypeSplits = nameSpaceSplit.Split('+');
 				for(int j = 0; j < nestedTypeSplits.Length; j ++)
 				{
 					var nestedTypeSplit = nestedTypeSplits[j];

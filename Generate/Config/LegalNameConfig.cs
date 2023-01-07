@@ -9,41 +9,40 @@ namespace SMFrame.Editor.Refleaction
 {
     public class LegalNameConfig
     {
-		[Serializable]
-		public class JsonDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
-		{
-			[SerializeField]
-			private List<TKey> keys;
-			[SerializeField]
-			private List<TValue> values;
 
-			public virtual void OnAfterDeserialize()
-			{
-				int count = Math.Min(keys.Count, values.Count);
-				for (int i = 0; i < count; i++)
-				{
-					Add(keys[i], values[i]);
-				}
-			}
-
-			public virtual void OnBeforeSerialize()
-			{
-				keys = new List<TKey>(Keys);
-				values = new List<TValue>(Values);
-			}
-		}
-
-		static JsonDictionary<string, int> replace;
+		static Dictionary<string, int> replace;
 
 		public static void LoadReplace(string jsonFile)
 		{
 			if (!File.Exists(jsonFile))
 			{
-				replace = new JsonDictionary<string, int>();
+				replace = new Dictionary<string, int>();
 				return;
 			}
-			var str = File.ReadAllText(jsonFile);
-			replace = JsonUtility.FromJson<JsonDictionary<string, int>>(str);
+			var lines = File.ReadAllLines(jsonFile);
+			foreach(var line in lines)
+			{
+				if(string.IsNullOrEmpty(line))
+				{
+					continue;
+				}
+				var strs = line.Split('=');
+				if(strs.Length < 2)
+				{
+					continue;
+				}
+				var key = strs[0].Trim();
+				if(string.IsNullOrEmpty(key))
+				{
+					continue;
+				}
+
+				if(int.TryParse(strs[1].Trim(), out var value)) 
+				{
+					continue;
+				}
+				replace.TryAdd(key, value);
+			}
 		}
 
 		public static string LegalName(string str)
@@ -76,7 +75,12 @@ namespace SMFrame.Editor.Refleaction
 			{
 				Directory.CreateDirectory(Path.GetDirectoryName(jsonFile));
 			}
-			File.WriteAllText(jsonFile, JsonUtility.ToJson(replace));
+			var str = string.Empty;
+			foreach(var item in replace) 
+			{
+				str += $"{item.Key}={item.Value}";
+			}
+			File.WriteAllText(jsonFile, str);
 		}
 	}
 }

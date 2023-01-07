@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
+#endif
 
 namespace SMFrame.Editor.Refleaction
 {
@@ -20,11 +22,12 @@ namespace SMFrame.Editor.Refleaction
 		/// </summary>
 		static HashSet<Type> BuZhiDaoStruct = new HashSet<Type>()
 		{
-
-			typeof(NativeSlice<>),
 			typeof(Nullable<>),
+#if UNITY_EDITOR
+			typeof(NativeSlice<>),
 			typeof(NativeArray<>),
 			typeof(StyleEnum<>),
+#endif
 		};
 
 		/// <summary>

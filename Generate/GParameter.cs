@@ -69,11 +69,17 @@ namespace SMFrame.Editor.Refleaction
 			{
 				return string.Empty;
 			}
-			if (parameter.ParameterType.IsPointer)
+
+			if(paramType.IsByRef) 
 			{
-				paramStr = $"Pointer.Box({paramName}, typeof({parameter.ParameterType.GetElementType().ToDeclareName()}))";
+				paramType = paramType.GetElementType();
 			}
-			else if (parameter.ParameterType == typeof(TypedReference))
+
+			if (paramType.IsPointer)
+			{
+				paramStr = $"Pointer.Box({paramName}, typeof({paramType.GetElementType().ToDeclareName()}))";
+			}
+			else if (paramType == typeof(TypedReference))
 			{
 				paramStr = $"TypedReference.ToObject({paramName})";
 			}
@@ -158,7 +164,15 @@ namespace SMFrame.Editor.Refleaction
 
 			if (paramType.IsPublic())
 			{
-				outAssignStr = $"\t\t\t{paramName} = ({paramType.ToClassName(true)})___parameters[{parameter.Position}];\n";
+				paramType = paramType.GetElementType();
+				if (paramType.IsPointer)
+				{
+					outAssignStr = $"\t\t\t{paramName} = ({paramType.ToClassName(true)})Pointer.Unbox(___parameters[{parameter.Position}]);";
+				}
+				else
+				{
+					outAssignStr = $"\t\t\t{paramName} = ({paramType.ToClassName(true)})___parameters[{parameter.Position}];\n";
+				}
 			}
 			else
 			{

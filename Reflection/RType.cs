@@ -91,6 +91,12 @@ namespace SMFrame.Editor.Refleaction
 				return;
 			}
 
+			if(instance.GetType() != type)
+			{
+				Debug.LogError($"{instance} is not type {type}");
+				return;
+			}
+
 			this.instance = instance;
 
 			// 给反射成员设置所属对象

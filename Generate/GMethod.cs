@@ -158,10 +158,6 @@ namespace SMFrame.Editor.Refleaction
 			}
 			#endregion
 
-			if(isUnsafe)
-			{
-				return string.Empty;
-			}
 			var result = $@"
         public {(isUnsafe ? "unsafe " : "")}{(method.IsStatic ? "static" : "virtual")} {returnTypeStr} {LegalNameConfig.LegalName(method.Name)}{genericArgsDelcareStr}({paramDeclareStr}){genericArgsConstraints}
         {{
@@ -194,7 +190,16 @@ namespace SMFrame.Editor.Refleaction
 			if(isPublic)
 			{
 				returnTypeStr = (canConvertToObject) ? returnType.ToClassName(true) : typeof(System.Object).ToClassName(true);
-				return $"return ({returnTypeStr})___result;";
+
+				if(returnType.IsPointer)
+				{
+					return $"return ({returnTypeStr})Pointer.Unbox(___result);";
+				}
+				else
+				{
+					return $"return ({returnTypeStr})___result;";
+				}
+
 			}
 			else
 			{

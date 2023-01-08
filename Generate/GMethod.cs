@@ -118,54 +118,31 @@ namespace SMFrame.Editor.Refleaction
 			#endregion
 
 			#region 处理参数
-			var parameters = method.GetParameters();
 			var paramStr = string.Empty;
 			string paramDeclareStr = string.Empty;
 			string outDefaultStr = string.Empty;
 			string outAssignStr = string.Empty;
 
-			for (int i = 0; i < parameters.Length; i++)
+			for (int i = 0; i < gParameters.Count; i++)
 			{
-				var param = parameters[i];
-				var paramType = param.ParameterType;
-				if (!paramType.IsPublic())
+				var param = gParameters[i];
+				if (!param.IsPublic() || param.CanNotConvertToObjects())
 				{
 					return string.Empty;
 				}
 
-				string str = string.Empty;
-				if (paramType.IsByRef)
-				{
-					if (param.IsOut)
-					{
-						str += "out ";
-						outDefaultStr += $"\t\t\t{param.Name} = default;\n";
-						outAssignStr += $"\t\t\t{param.Name} = ({paramType.ToClassName(true)})___parameters[{param.Position}];\n";
-					}
-					else if (param.IsIn)
-					{
-						str += "in ";
-					}
-					else
-					{
-						str += "ref ";
-						outAssignStr += $"\t\t\t{param.Name} = ({paramType.ToClassName(true)})___parameters[{param.Position}];\n";
-					}
-				}
-				if (paramType.IsUnsafe())
+				paramStr += param.GetParamStr();
+				paramDeclareStr += param.GetDeclareStr();
+				outDefaultStr += param.GetOutDefaultStr();
+				outAssignStr += param.GetOutAssignStr();
+
+				
+				if (param.IsUnsafe())
 				{
 					isUnsafe = true;
 				}
-
-				str += paramType.ToClassName(true) + "  @" + param.Name;
-				paramDeclareStr += str;
 				
-				if (!GetParamName(param, out var paramName))
-				{
-					return string.Empty;
-				}
-				paramStr += paramName;
-				if (i < parameters.Length - 1)
+				if (i < gParameters.Count - 1)
 				{
 					paramDeclareStr += ", ";
 					paramStr += ", ";
@@ -199,51 +176,14 @@ namespace SMFrame.Editor.Refleaction
 			return result;
 		}
 
-		static bool GetParamName(ParameterInfo param, out string result)
-		{
-			result = string.Empty;
-			foreach (var canNot in CanNotConvertToObjects)
-			{
-				if (param.ParameterType.ContainType(canNot))
-				{
-					return false;
-				}
-			}
-			if (param.ParameterType.IsPointer)
-			{
-				result = $"Pointer.Box(@{param.Name}, typeof({param.ParameterType.GetElementType().ToDeclareName()}))";
-			}
-			else if (param.ParameterType == typeof(TypedReference))
-			{
-				result = $"TypedReference.ToObject(@{param.Name})";
-			}
-			else
-			{
-				result = "@" + param.Name;
-			}
-			return true;
-		}
 
 
-		private static List<Type> CanNotConvertToObjects = new List<Type>()
-		{
-			typeof(TypedReference),
-			typeof(NativeArray<>),
-			typeof(NativeSlice<>),
-			typeof(Span<>),
-			typeof(ReadOnlySpan<>),
-		};
+
+		
 
 		static string GetReturn(Type returnType, out string returnTypeStr)
 		{
-			bool canConvertToObject = true;
-			foreach(var canNot in CanNotConvertToObjects)
-			{
-				if(returnType.ContainType(canNot))
-				{
-					canConvertToObject = false;
-				}
-			}
+			bool canConvertToObject = !CanNotConvertToObjectsConfig.CanNot(returnType);
 			bool isPublic = returnType.IsPublic();
 			returnTypeStr = (canConvertToObject && isPublic) ? returnType.ToClassName(true) : typeof(System.Object).ToClassName(true);
 			bool hasReturn = returnType != typeof(void);

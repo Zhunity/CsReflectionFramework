@@ -11,7 +11,7 @@ namespace SMFrame.Editor.Refleaction
 {
     public class PrimitiveTypeConfig
     {
-		static HashSet<Type> PrimitiveType = new HashSet<Type>()
+		public static HashSet<Type> PrimitiveType = new HashSet<Type>()
 		{
 			typeof(string),
 			typeof(void),
@@ -20,7 +20,7 @@ namespace SMFrame.Editor.Refleaction
 		/// <summary>
 		/// 由于暂时不知道怎么处理泛型中约束是struct的类，先屏蔽处理
 		/// </summary>
-		static HashSet<Type> BuZhiDaoStruct = new HashSet<Type>()
+		public static HashSet<Type> BuZhiDaoStruct = new HashSet<Type>()
 		{
 			typeof(Nullable<>),
 #if UNITY_EDITOR

@@ -11,12 +11,26 @@ namespace SMFrame.Editor.Refleaction
     public class GMethod : GMember
     {
         MethodInfo method;
+		List<GGenericArgument> gGenericArguments= new List<GGenericArgument>();
+		List<GParameter> gParameters= new List<GParameter>();
 
         public GMethod(MethodInfo method)
         {
             this.method = method;
 			isStatic = method.IsStatic;
-        }
+
+			var generics = method.GetGenericArguments();
+			foreach(var generic in generics) 
+			{
+				gGenericArguments.Add(new GGenericArgument(generic));
+			}
+
+			var parameters = method.GetParameters();
+			foreach(var parameter in parameters)
+			{
+				gParameters.Add(new GParameter(parameter));
+			}
+		}
 
 		public override void GetRefTypes(HashSet<Type> refTypes)
 		{

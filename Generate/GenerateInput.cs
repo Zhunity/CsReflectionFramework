@@ -87,7 +87,7 @@ namespace SMFrame.Editor.Refleaction
 
 		public static void Generate(string className)
 		{
-			Generate(ReleactionUtils.GetType(className));
+			Generate(ReflectionUtils.GetType(className));
 		}
 
 		public static void Generate(object instance)
@@ -124,7 +124,7 @@ namespace SMFrame.Editor.Refleaction
 			LegalNameConfig.LoadReplace(jsonFile);
 			foreach (var type in types)
 			{
-				AddGenerateClass(ReleactionUtils.GetType(type));
+				AddGenerateClass(ReflectionUtils.GetType(type));
 			}
 			GenerateClasses();
 			LegalNameConfig.SaveReplace(jsonFile);
@@ -149,7 +149,7 @@ namespace SMFrame.Editor.Refleaction
 						type = t;
 						break;
 					case string name:
-						type = ReleactionUtils.GetType(name);
+						type = ReflectionUtils.GetType(name);
 						break;
 					default:
 						type = obj.GetType();

@@ -21,7 +21,7 @@ namespace SMFrame.Editor.Refleaction
 	/// <param name="obj"></param>
 	public delegate void UniversalAction(params object[] obj);
 
-	public static class ReleactionUtils
+	public static class ReflectionUtils
 	{
 		static private Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
 

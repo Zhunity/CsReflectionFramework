@@ -113,7 +113,7 @@ namespace SMFrame.Editor.Refleaction
 
 
 			var declare = type.ToString(typeTranslater);
-			string nameSpace = GetNameSpace(declare);
+			string nameSpace = TypeToString.ToRTypeStr(declare);
 			return nameSpace;
 		}
 
@@ -126,15 +126,6 @@ namespace SMFrame.Editor.Refleaction
 			}
 			result = String.Empty;
 			return false;
-		}
-
-		private string GetNameSpace(string declare)
-		{
-			if (string.IsNullOrEmpty(declare))
-			{
-				return string.Empty;
-			}
-			return $"R{declare.Replace(".", ".R").Replace("<", "<R").Replace(", ", ", R")}";
 		}
 	}
 }

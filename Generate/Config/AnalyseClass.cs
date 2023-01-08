@@ -237,7 +237,7 @@ namespace SMFrame.Editor.Refleaction
 			}
 			else
 			{
-				result = $" ReleactionUtils.GetType(\"{t.FullName}\")";
+				result = $" ReflectionUtils.GetType(\"{t.FullName}\")";
 			}
 			return true;
 		}
@@ -572,6 +572,15 @@ namespace SMFrame.Editor.Refleaction
 				genericArgs[i - declareGenericCount] = totalGenericArguments[i];
 			}
 			return genericArgs;
+		}
+
+		public static string ToRTypeStr(string typeStr)
+		{
+			if (string.IsNullOrEmpty(typeStr))
+			{
+				return string.Empty;
+			}
+			return $"R{typeStr.Replace(".", ".R").Replace("<", "<R").Replace(", ", ", R")}";
 		}
 	}
 }

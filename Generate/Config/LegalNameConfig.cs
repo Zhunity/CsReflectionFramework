@@ -13,6 +13,7 @@ namespace SMFrame.Editor.Refleaction
 
 		public static void LoadReplace(string jsonFile)
 		{
+			replace.Clear();
 			if (!File.Exists(jsonFile))
 			{
 				return;
@@ -35,7 +36,7 @@ namespace SMFrame.Editor.Refleaction
 					continue;
 				}
 
-				if(int.TryParse(strs[1].Trim(), out var value)) 
+				if(!int.TryParse(strs[1].Trim(), out var value)) 
 				{
 					continue;
 				}
@@ -45,6 +46,11 @@ namespace SMFrame.Editor.Refleaction
 
 		public static string LegalName(string str)
 		{
+			if(string.IsNullOrEmpty(str))
+			{
+				return "_______";
+			}
+
 			var matches = Regex.Matches(str, @"\W");
 			if (matches == null || matches.Count <= 0)
 			{
@@ -76,7 +82,7 @@ namespace SMFrame.Editor.Refleaction
 			var str = string.Empty;
 			foreach(var item in replace) 
 			{
-				str += $"{item.Key}={item.Value}";
+				str += $"{item.Key}={item.Value}\n";
 			}
 			File.WriteAllText(jsonFile, str);
 		}

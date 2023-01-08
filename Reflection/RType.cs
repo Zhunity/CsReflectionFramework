@@ -46,7 +46,7 @@ namespace SMFrame.Editor.Refleaction
 		{
 			this.genericCount = genericCount;
 			this.types = types;
-			this.type = ReleactionUtils.GetType(type);
+			this.type = ReflectionUtils.GetType(type);
 			name = type;
 			memberList.Clear();
 		}
@@ -133,7 +133,7 @@ namespace SMFrame.Editor.Refleaction
 
 		public object ConvertObject(Type type)
 		{
-			return ReleactionUtils.ConvertObject(Value, type);
+			return ReflectionUtils.ConvertObject(Value, type);
 		}
 
 		public RMember CreateMember(string name)

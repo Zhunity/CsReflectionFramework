@@ -126,7 +126,7 @@ namespace SMFrame.Editor.Refleaction
 			for (int i = 0; i < gParameters.Count; i++)
 			{
 				var param = gParameters[i];
-				if (!param.IsPublic() || param.CanNotConvertToObjects())
+				if (param.CanNotConvertToObjects())
 				{
 					return string.Empty;
 				}

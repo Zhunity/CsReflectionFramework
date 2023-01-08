@@ -58,29 +58,43 @@ namespace SMFrame.Editor.Refleaction
 			var paramStr = string.Empty;
 
 			var paramType = parameter.ParameterType;
+			var paramName = LegalNameConfig.LegalName(parameter.Name);
+
 			if (!paramType.IsPublic())
 			{
-				return string.Empty;
+				return $"@{paramName}.Value";
 			}
 
-			if (!GetParamName(parameter, out var paramName))
+			if (CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
 			{
 				return string.Empty;
 			}
-			paramStr += paramName;
+			if (parameter.ParameterType.IsPointer)
+			{
+				paramStr = $"Pointer.Box(@{paramName}, typeof({parameter.ParameterType.GetElementType().ToDeclareName()}))";
+			}
+			else if (parameter.ParameterType == typeof(TypedReference))
+			{
+				paramStr = $"TypedReference.ToObject(@{paramName})";
+			}
+			else
+			{
+				paramStr = "@" + paramName;
+			}
 
 			return paramStr;
 		}
+
+		/// <summary>
+		/// 函数生命括号内的参数
+		/// </summary>
+		/// <returns></returns>
 		public string GetDeclareStr()
 		{
 			string paramDeclareStr = string.Empty;
 
 			var paramType = parameter.ParameterType;
-			// TODO R
-			if (!paramType.IsPublic())
-			{
-				return string.Empty;
-			}
+			var paramName = LegalNameConfig.LegalName(parameter.Name);
 
 			string str = string.Empty;
 			if (paramType.IsByRef)
@@ -99,7 +113,22 @@ namespace SMFrame.Editor.Refleaction
 				}
 			}
 
-			str += paramType.ToClassName(true) + "  @" + parameter.Name;
+			if(paramType.IsPublic())
+			{
+				str += paramType.ToClassName(true) + "  @" + paramName;
+			}
+			else
+			{
+				if(PrimitiveTypeConfig.IsPrimitive(paramType))
+				{
+					str += "RType  @" + paramName;
+				}
+				else
+				{
+					str += TypeToString.ToRTypeStr(paramType.ToClassName(true)) + "  @" + paramName;
+				}
+			}
+			
 			paramDeclareStr += str;
 
 			return paramDeclareStr;
@@ -110,16 +139,13 @@ namespace SMFrame.Editor.Refleaction
 		{
 			string outDefaultStr = string.Empty;
 			var paramType = parameter.ParameterType;
-			if (!paramType.IsPublic())
-			{
-				return string.Empty;
-			}
+			var paramName = LegalNameConfig.LegalName(parameter.Name);
 
 			if (paramType.IsByRef)
 			{
 				if (parameter.IsOut)
 				{
-					outDefaultStr += $"\t\t\t{parameter.Name} = default;\n";
+					outDefaultStr += $"\t\t\t{paramName} = default;\n";
 				}
 			}
 			return outDefaultStr;
@@ -130,6 +156,8 @@ namespace SMFrame.Editor.Refleaction
 			string outAssignStr = string.Empty;
 
 			var paramType = parameter.ParameterType;
+			var paramName = LegalNameConfig.LegalName(parameter.Name);
+
 			if (!paramType.IsPublic())
 			{
 				return string.Empty;
@@ -140,15 +168,20 @@ namespace SMFrame.Editor.Refleaction
 			{
 				if (parameter.IsOut)
 				{
-					outAssignStr += $"\t\t\t{parameter.Name} = ({paramType.ToClassName(true)})___parameters[{parameter.Position}];\n";
+					outAssignStr += $"\t\t\t{paramName} = ({paramType.ToClassName(true)})___parameters[{parameter.Position}];\n";
 				}
 				else if (!parameter.IsIn)
 				{
-					outAssignStr += $"\t\t\t{parameter.Name} = ({paramType.ToClassName(true)})___parameters[{parameter.Position}];\n";
+					outAssignStr += $"\t\t\t{paramName} = ({paramType.ToClassName(true)})___parameters[{parameter.Position}];\n";
 				}
 			}
 
 			return outAssignStr;
+		}
+
+		public bool IsInvalid()
+		{
+			return string.IsNullOrEmpty(parameter.Name);
 		}
 
 		public bool IsPublic()
@@ -164,29 +197,6 @@ namespace SMFrame.Editor.Refleaction
 		public bool CanNotConvertToObjects()
 		{
 			return CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType);
-		}
-
-
-		static bool GetParamName(ParameterInfo param, out string result)
-		{
-			result = string.Empty;
-			if(CanNotConvertToObjectsConfig.CanNot(param.ParameterType))
-			{
-				return false;
-			}
-			if (param.ParameterType.IsPointer)
-			{
-				result = $"Pointer.Box(@{param.Name}, typeof({param.ParameterType.GetElementType().ToDeclareName()}))";
-			}
-			else if (param.ParameterType == typeof(TypedReference))
-			{
-				result = $"TypedReference.ToObject(@{param.Name})";
-			}
-			else
-			{
-				result = "@" + param.Name;
-			}
-			return true;
 		}
 	}
 }

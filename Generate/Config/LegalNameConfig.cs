@@ -9,13 +9,12 @@ namespace SMFrame.Editor.Refleaction
     public class LegalNameConfig
     {
 
-		static Dictionary<string, int> replace;
+		static Dictionary<string, int> replace = new Dictionary<string, int>();
 
 		public static void LoadReplace(string jsonFile)
 		{
 			if (!File.Exists(jsonFile))
 			{
-				replace = new Dictionary<string, int>();
 				return;
 			}
 			var lines = File.ReadAllLines(jsonFile);

@@ -11,11 +11,19 @@ namespace SMFrame.Editor.Refleaction
     public class GProperty : GMember
     {
         PropertyInfo property;
+		List<GParameter> gParameters = new List<GParameter>();
 
-        public GProperty(PropertyInfo property)
+
+		public GProperty(PropertyInfo property)
         {
             this.property = property;
             isStatic = property.IsStatic();
+
+			var parameters = property.GetIndexParameters();
+			foreach(var parameter in parameters)
+			{
+				gParameters.Add(new GParameter(parameter));
+			}
         }
 
 		public override void GetRefTypes(HashSet<Type> refTypes)
@@ -35,19 +43,19 @@ namespace SMFrame.Editor.Refleaction
 			sb.AppendLine(declareStr);
 		}
 
-		static private string GetPropertyName(PropertyInfo property)
+		private string GetPropertyName(PropertyInfo property)
 		{
-			var method = property.GetMethod == null ? property.SetMethod : property.GetMethod;
-			var parameters = method.GetParameters();
-			// 因为get/set函数名字可能被加密了，导致最终的名字和property.name不一样
-			if(parameters.Length <= 0)
+			string paramStr = LegalNameConfig.LegalName(property.Name);
+
+			if (gParameters.Count > 0)
 			{
-				return LegalNameConfig.LegalName(property.Name);
+				foreach (var parameter in gParameters)
+				{
+					paramStr += parameter.ToFieldName();
+				}
 			}
 
-			string paramStr = GMethod.GetMethodName(method);
-			paramStr = paramStr.Replace("get_", "").Replace("set_", "");
-			return paramStr;
+			return LegalNameConfig.LegalName(paramStr);
 		}
 
 		protected override string GetNewParamStr()

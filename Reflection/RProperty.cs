@@ -83,7 +83,7 @@ namespace SMFrame.Editor.Refleaction
 
 		protected override void SetInfo(Type belongType, string name)
 		{
-			propertyInfo = belongType.GetProperty(name, RType.flags, null, null, types, null); ;
+			propertyInfo = belongType.GetProperty(name, RType.flags, null, null, types, null); 
 		}
 
 		protected override void SetType()

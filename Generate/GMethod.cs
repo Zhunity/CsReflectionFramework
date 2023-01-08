@@ -35,10 +35,15 @@ namespace SMFrame.Editor.Refleaction
 		public override void GetRefTypes(HashSet<Type> refTypes)
 		{
 			method.ReturnType.GetRefType(ref refTypes);
-			var parameters = method.GetParameters();
-			foreach (var param in parameters)
+
+			foreach(var generic in gGenericArguments)
 			{
-				param.ParameterType.GetRefType(ref refTypes);
+				generic.GetRefTypes(refTypes);
+			}
+
+			foreach (var param in gParameters)
+			{
+				param.GetRefTypes(refTypes);
 			}
 		}
 
@@ -50,7 +55,6 @@ namespace SMFrame.Editor.Refleaction
 
 		protected override string GetNewParamStr()
 		{
-			var generics = method.GetGenericArguments();
 			var parameters = method.GetParameters();
 			var paramStr = string.Empty;
 			for (int i = 0; i < parameters.Length; i++)
@@ -58,7 +62,7 @@ namespace SMFrame.Editor.Refleaction
 				paramStr += $", {parameters[i].ParameterType.ToGetMethod()}";
 			}
 
-			return $", {generics.Length}{paramStr}";
+			return $", {gGenericArguments.Count}{paramStr}";
 		}
 
 		public override string GetDeclareName()
@@ -66,40 +70,17 @@ namespace SMFrame.Editor.Refleaction
 			return GetMethodName(method);
 		}
 
-		static public string GetMethodName(MethodInfo method)
+		 public string GetMethodName(MethodInfo method)
 		{
-			var generics = method.GetGenericArguments();
 			string paramStr = LegalNameConfig.LegalName(method.Name);
-			foreach (var generic in generics)
+			foreach (var generic in gGenericArguments)
 			{
-				paramStr += "_G" + generic.ToFieldName();
+				paramStr += generic.ToFieldName();
 			}
 
-			var parameters = method.GetParameters();
-			foreach (var parameter in parameters)
+			foreach (var parameter in gParameters)
 			{
-				Type parameterType = parameter.ParameterType;
-
-				var name = parameterType.ToFieldName();
-
-				bool isRef = parameterType.IsByRef;
-				if (!isRef)
-				{
-					paramStr += "_" + name;
-					continue;
-				}
-				if (parameter.IsOut)
-				{
-					paramStr += "_Out_" + name;
-				}
-				else if (parameter.IsIn)
-				{
-					paramStr += "_In_" + name;
-				}
-				else
-				{
-					paramStr += "_Ref_" + name;
-				}
+				paramStr += parameter.ToFieldName();
 			}
 
 			return LegalNameConfig.LegalName( paramStr);
@@ -114,22 +95,14 @@ namespace SMFrame.Editor.Refleaction
 			var genericArgsDelcareStr = string.Empty;
 			var genericArgsConstraints = string.Empty;
 			var genricArgsStr = string.Empty;
-			var generics = method.GetGenericArguments();
-			if (generics.Length > 0)
+			if (gGenericArguments.Count > 0)
 			{
-				List<GGenericArgument> gGenericArguments = new List<GGenericArgument>();
-				for (int i = 0; i < generics.Length; i++)
-				{
-					var genericArgs = new GGenericArgument(generics[i]);
-					gGenericArguments.Add(genericArgs);
-				}
-
 				genericArgsDelcareStr += "<";
 				for (int i = 0; i < gGenericArguments.Count; i++)
 				{
 					genericArgsDelcareStr += gGenericArguments[i].GetName();
 					genricArgsStr += $"typeof({gGenericArguments[i].GetName()})";
-					if (i < generics.Length - 1)
+					if (i < gGenericArguments.Count - 1)
 					{
 						genericArgsDelcareStr += ", ";
 						genricArgsStr += ", ";

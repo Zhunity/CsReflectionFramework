@@ -76,5 +76,19 @@ namespace SMFrame.Editor.Refleaction
 		{
 			return LegalNameConfig.LegalName(genericArgument.Name);
 		}
+
+		public void GetRefTypes(HashSet<Type> refTypes)
+		{
+			Type[] tpConstraints = genericArgument.GetGenericParameterConstraints();
+			foreach (Type tpc in tpConstraints) 
+			{
+				tpc.GetRefType(ref refTypes);
+			}
+		}
+
+		public string ToFieldName()
+		{
+			return "_G" + genericArgument.ToFieldName(); ;
+		}
 	}
 }

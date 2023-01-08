@@ -119,14 +119,7 @@ namespace SMFrame.Editor.Refleaction
 			}
 			else
 			{
-				if(PrimitiveTypeConfig.IsPrimitive(paramType))
-				{
-					str += "RType  @" + paramName;
-				}
-				else
-				{
-					str += TypeToString.ToRTypeStr(paramType.ToClassName(true)) + "  @" + paramName;
-				}
+				str += paramType.ToRtypeString("Type") + "  @" + paramName;
 			}
 			
 			paramDeclareStr += str;

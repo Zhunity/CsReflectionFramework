@@ -339,6 +339,66 @@ namespace SMFrame.Editor.Refleaction
 			child.Add(type);
 		}
 
+		static string _prefix = string.Empty;
+		public static string ToRtypeString(this Type type, string prefix)
+		{
+			_prefix = prefix;
+			TypeTranslater typeTranslater = new TypeTranslater();
+			typeTranslater.fullName = true;
+			typeTranslater.Array.format = prefix + "Array<{0}>";
+			typeTranslater.Pointer.format = prefix + "Pointer<{0}>";
+			typeTranslater.GenericTypeDefinition.fun = (strs) =>
+			{
+				var genericDefine = strs[0];
+				string genericParamStr = string.Empty;
+				for (int i = 1; i < strs.Length; i++)
+				{
+					var paramName = strs[i];
+					genericParamStr += paramName;
+					if (i != strs.Length - 1)
+					{
+						genericParamStr += ", ";
+					}
+				}
+				var defineName = $"{genericDefine}<{genericParamStr}>";
+				return defineName;
+			};
+			typeTranslater.GenericType.fun = (strs) =>
+			{
+				var genericDefine = strs[1];
+				string genericParamStr = string.Empty;
+				for (int i = 2; i < strs.Length; i++)
+				{
+					var paramName = strs[i];
+					genericParamStr += paramName;
+					if (i != strs.Length - 1)
+					{
+						genericParamStr += ", ";
+					}
+				}
+				var defineName = $"{genericDefine}<{genericParamStr}>";
+				return defineName;
+			};
+			typeTranslater.GenericParameter.format = prefix;
+			typeTranslater.translate = TranslaterRType;
+
+
+			var declare = type.ToString(typeTranslater);
+			string nameSpace = TypeToString.ToRTypeStr(declare);
+			return nameSpace;
+		}
+
+		private static bool TranslaterRType(Type t, TypeTranslater translater, out string result)
+		{
+			if (PrimitiveTypeConfig.IsPrimitive(t))
+			{
+				result = _prefix;
+				return true;
+			}
+			result = String.Empty;
+			return false;
+		}
+
 		public static string ToString(this Type type, TypeTranslater translater)
 		{
 			bool needFullName = translater.fullName;

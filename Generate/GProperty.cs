@@ -38,7 +38,7 @@ namespace SMFrame.Editor.Refleaction
 
 		public override void GetDeclareStr(StringBuilder sb)
 		{
-			string fieldType = GetPropertyType(property.PropertyType); 
+			string fieldType = GetPropertyType(); 
 			var declareStr = GetDeclareStr(fieldType, property.Name, property.ToString());
 			sb.AppendLine(declareStr);
 		}
@@ -68,64 +68,9 @@ namespace SMFrame.Editor.Refleaction
 			return ", -1" + paramStr;
 		}
 
-		private string GetPropertyType(Type type)
+		private string GetPropertyType()
 		{
-			TypeTranslater typeTranslater = new TypeTranslater();
-			typeTranslater.fullName = true;
-			typeTranslater.Array.format = "PropertyArray<{0}>";
-			typeTranslater.Pointer.format = "PropertyPointer<{0}>";
-			typeTranslater.GenericTypeDefinition.fun = (strs) =>
-			{
-				var genericDefine = strs[0];
-				string genericParamStr = string.Empty;
-				for (int i = 1; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				var defineName = $"{genericDefine}<{genericParamStr}>";
-				return defineName;
-			};
-			typeTranslater.GenericType.fun = (strs) =>
-			{
-				var genericDefine = strs[1];
-				string genericParamStr = string.Empty;
-				for (int i = 2; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				var defineName = $"{genericDefine}<{genericParamStr}>";
-				return defineName;
-			};
-			typeTranslater.GenericParameter.format = "Property";
-			typeTranslater.translate = Translater;
-
-
-
-
-			var declare = type.ToString(typeTranslater);
-			string nameSpace = TypeToString.ToRTypeStr(declare);
-			return nameSpace;
-		}
-
-		private bool Translater(Type t, TypeTranslater translater, out string result)
-		{
-			if (PrimitiveTypeConfig.IsPrimitive(t))
-			{
-				result = "Property";
-				return true;
-			}
-			result = String.Empty;
-			return false;
+			return property.PropertyType.ToRtypeString("Property");
 		}
 	}
 }

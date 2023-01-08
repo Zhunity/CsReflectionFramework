@@ -183,16 +183,26 @@ namespace SMFrame.Editor.Refleaction
 
 		static string GetReturn(Type returnType, out string returnTypeStr)
 		{
-			bool canConvertToObject = !CanNotConvertToObjectsConfig.CanNot(returnType);
-			bool isPublic = returnType.IsPublic();
-			returnTypeStr = (canConvertToObject && isPublic) ? returnType.ToClassName(true) : typeof(System.Object).ToClassName(true);
 			bool hasReturn = returnType != typeof(void);
 			if (!hasReturn)
 			{
+				returnTypeStr = "void";
 				return String.Empty;
 			}
+			bool canConvertToObject = !CanNotConvertToObjectsConfig.CanNot(returnType);
+			bool isPublic = returnType.IsPublic();
+			if(isPublic)
+			{
+				returnTypeStr = (canConvertToObject) ? returnType.ToClassName(true) : typeof(System.Object).ToClassName(true);
+				return $"return ({returnTypeStr})___result;";
+			}
+			else
+			{
+				returnTypeStr = returnType.ToRtypeString("Type");
+				return $"return new {returnTypeStr}(___result);";
+			}
 
-			return $"return ({returnTypeStr})___result;";
+			
 		}
 	}
 }

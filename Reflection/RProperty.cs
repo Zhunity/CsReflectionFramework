@@ -44,7 +44,15 @@ namespace SMFrame.Editor.Refleaction
 			}
 			else
 			{
-				return info.GetValue(belong);
+				try
+				{
+					return info.GetValue(belong);
+				}
+				catch(Exception ex) 
+				{
+					Debug.LogError(belong.GetType().Name + "\t" + info + "\n" + ex.ToString());
+					return null;
+				}
 			}
 
 		}

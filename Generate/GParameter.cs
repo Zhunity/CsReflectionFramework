@@ -115,11 +115,11 @@ namespace SMFrame.Editor.Refleaction
 
 			if(paramType.IsPublic())
 			{
-				str += paramType.ToClassName(true) + "  " + paramName;
+				str += paramType.ToClassName(true) + " " + paramName;
 			}
 			else
 			{
-				str += paramType.ToRtypeString("Type") + "  " + paramName;
+				str += paramType.ToRtypeString("Type") + " " + paramName;
 			}
 			
 			paramDeclareStr += str;
@@ -166,16 +166,6 @@ namespace SMFrame.Editor.Refleaction
 			}
 
 			return outAssignStr;
-		}
-
-		public bool IsInvalid()
-		{
-			return string.IsNullOrEmpty(parameter.Name);
-		}
-
-		public bool IsPublic()
-		{
-			return parameter.ParameterType.IsPublic();
 		}
 
 		public bool IsUnsafe()

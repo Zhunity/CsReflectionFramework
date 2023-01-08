@@ -7,5 +7,8 @@ namespace SMFrame.Editor.Refleaction
 {
 	public class RTypePointer<T> : RType
 	{
+		public RTypePointer(object instance) : base(instance)
+		{
+		}
 	}
 }

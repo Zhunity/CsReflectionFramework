@@ -58,11 +58,11 @@ namespace SMFrame.Editor.Refleaction
 			var paramStr = string.Empty;
 
 			var paramType = parameter.ParameterType;
-			var paramName = LegalNameConfig.LegalName(parameter.Name);
+			var paramName = GetName();
 
 			if (!paramType.IsPublic())
 			{
-				return $"@{paramName}.Value";
+				return $"{paramName}.Value";
 			}
 
 			if (CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
@@ -71,15 +71,15 @@ namespace SMFrame.Editor.Refleaction
 			}
 			if (parameter.ParameterType.IsPointer)
 			{
-				paramStr = $"Pointer.Box(@{paramName}, typeof({parameter.ParameterType.GetElementType().ToDeclareName()}))";
+				paramStr = $"Pointer.Box({paramName}, typeof({parameter.ParameterType.GetElementType().ToDeclareName()}))";
 			}
 			else if (parameter.ParameterType == typeof(TypedReference))
 			{
-				paramStr = $"TypedReference.ToObject(@{paramName})";
+				paramStr = $"TypedReference.ToObject({paramName})";
 			}
 			else
 			{
-				paramStr = "@" + paramName;
+				paramStr = paramName;
 			}
 
 			return paramStr;
@@ -94,7 +94,7 @@ namespace SMFrame.Editor.Refleaction
 			string paramDeclareStr = string.Empty;
 
 			var paramType = parameter.ParameterType;
-			var paramName = LegalNameConfig.LegalName(parameter.Name);
+			var paramName = GetName();
 
 			string str = string.Empty;
 			if (paramType.IsByRef)
@@ -115,11 +115,11 @@ namespace SMFrame.Editor.Refleaction
 
 			if(paramType.IsPublic())
 			{
-				str += paramType.ToClassName(true) + "  @" + paramName;
+				str += paramType.ToClassName(true) + "  " + paramName;
 			}
 			else
 			{
-				str += paramType.ToRtypeString("Type") + "  @" + paramName;
+				str += paramType.ToRtypeString("Type") + "  " + paramName;
 			}
 			
 			paramDeclareStr += str;
@@ -132,7 +132,7 @@ namespace SMFrame.Editor.Refleaction
 		{
 			string outDefaultStr = string.Empty;
 			var paramType = parameter.ParameterType;
-			var paramName = LegalNameConfig.LegalName(parameter.Name);
+			var paramName = GetName();
 
 			if (paramType.IsByRef)
 			{
@@ -146,27 +146,23 @@ namespace SMFrame.Editor.Refleaction
 
 		public string GetOutAssignStr()
 		{
-			string outAssignStr = string.Empty;
-
 			var paramType = parameter.ParameterType;
-			var paramName = LegalNameConfig.LegalName(parameter.Name);
-
-			if (!paramType.IsPublic())
+			if (!paramType.IsByRef || parameter.IsIn)
 			{
 				return string.Empty;
 			}
 
-			string str = string.Empty;
-			if (paramType.IsByRef)
+			string outAssignStr = string.Empty;
+
+			var paramName = GetName();
+
+			if (paramType.IsPublic())
 			{
-				if (parameter.IsOut)
-				{
-					outAssignStr += $"\t\t\t{paramName} = ({paramType.ToClassName(true)})___parameters[{parameter.Position}];\n";
-				}
-				else if (!parameter.IsIn)
-				{
-					outAssignStr += $"\t\t\t{paramName} = ({paramType.ToClassName(true)})___parameters[{parameter.Position}];\n";
-				}
+				outAssignStr = $"\t\t\t{paramName} = ({paramType.ToClassName(true)})___parameters[{parameter.Position}];\n";
+			}
+			else
+			{
+				outAssignStr = $"\t\t\t{paramName} = new {paramType.ToRtypeString("Type")}(___parameters[{parameter.Position}]);\n";
 			}
 
 			return outAssignStr;
@@ -190,6 +186,11 @@ namespace SMFrame.Editor.Refleaction
 		public bool CanNotConvertToObjects()
 		{
 			return CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType);
+		}
+
+		public string GetName()
+		{
+			return "@" + LegalNameConfig.LegalName(parameter.Name);
 		}
 	}
 }

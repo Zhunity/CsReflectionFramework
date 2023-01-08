@@ -64,6 +64,11 @@ namespace SMFrame.Editor.Refleaction
 			memberList.Clear();
 		}
 
+		public RType(object instance) : this(instance.GetType())
+		{
+			SetInstance(instance);
+		}
+
 		public virtual void SetValue(object value)
 		{
 			SetInstance(value);

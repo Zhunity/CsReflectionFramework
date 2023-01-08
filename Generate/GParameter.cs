@@ -45,5 +45,10 @@ namespace SMFrame.Editor.Refleaction
 
 			return paramStr;
 		}
+
+		public string GetNewParamStr()
+		{
+			return parameter.ParameterType.ToGetMethod();
+		}
 	}
 }

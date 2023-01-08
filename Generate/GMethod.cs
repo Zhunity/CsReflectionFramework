@@ -55,11 +55,10 @@ namespace SMFrame.Editor.Refleaction
 
 		protected override string GetNewParamStr()
 		{
-			var parameters = method.GetParameters();
 			var paramStr = string.Empty;
-			for (int i = 0; i < parameters.Length; i++)
+			for (int i = 0; i < gParameters.Count; i++)
 			{
-				paramStr += $", {parameters[i].ParameterType.ToGetMethod()}";
+				paramStr += $", {gParameters[i].GetNewParamStr()}";
 			}
 
 			return $", {gGenericArguments.Count}{paramStr}";

@@ -80,7 +80,7 @@ namespace SMFrame.Editor.Refleaction
 				}
 			}
 
-			// ÅÐ¶Ïnew
+			// ÅÐ¶Ïnew op_Explicit_Decimal
 			var methods = type.GetMethods(RType.flags);
 			foreach (var method in methods)
 			{

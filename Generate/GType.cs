@@ -39,6 +39,22 @@ namespace SMFrame.Editor.Refleaction
 				this.genericArgs.Add(arg);
 			}
 
+			HashSet<MethodInfo> getSetHash = new HashSet<MethodInfo>();
+			// 因为event会和field同名，先获取event的
+			var events = type.GetEvents(RType.flags);
+			foreach (var @event in events)
+			{
+				getSetHash.Add(@event.AddMethod);
+				getSetHash.Add(@event.RemoveMethod);
+				GEvent gEvent = new(@event);
+
+				string name = gEvent.GetDeclareName();
+				if (!this.events.TryAdd(name, gEvent) || !this.members.TryAdd(name, gEvent))
+				{
+					Debug.Log(type.Name + "添加events失败:" + name + "  " + this.events[name] + " " + this.members[name]);
+				}
+			}
+
 			var fields = type.GetFields(RType.flags);
 			foreach (var field in fields)
 			{
@@ -50,7 +66,6 @@ namespace SMFrame.Editor.Refleaction
 				}
 			}
 
-			HashSet<MethodInfo> getSetHash = new HashSet<MethodInfo>();
 			var properties = type.GetProperties(RType.flags);
 			foreach (var property in properties)
 			{
@@ -65,20 +80,7 @@ namespace SMFrame.Editor.Refleaction
 				}
 			}
 
-			var events = type.GetEvents(RType.flags);
-			foreach (var @event in events)
-			{
-				getSetHash.Add(@event.AddMethod);
-				getSetHash.Add(@event.RemoveMethod);
-				GEvent gEvent = new(@event);
-
-				string name = gEvent.GetDeclareName();
-				if (!this.events.TryAdd(name, gEvent) || !this.members.TryAdd(name, gEvent))
-				{
-					Debug.Log(type.Name + "添加events失败:" + name);
-				}
-			}
-
+			// 判断new
 			var methods = type.GetMethods(RType.flags);
 			foreach (var method in methods)
 			{

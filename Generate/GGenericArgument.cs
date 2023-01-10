@@ -79,11 +79,7 @@ namespace SMFrame.Editor.Refleaction
 
 		public void GetRefTypes(HashSet<Type> refTypes)
 		{
-			Type[] tpConstraints = genericArgument.GetGenericParameterConstraints();
-			foreach (Type tpc in tpConstraints) 
-			{
-				tpc.GetRefType(ref refTypes);
-			}
+			genericArgument.GetRefType(ref refTypes);
 		}
 
 		public string ToFieldName()

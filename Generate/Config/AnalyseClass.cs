@@ -306,14 +306,15 @@ namespace SMFrame.Editor.Refleaction
 
 		public static void GetRefType(this Type type, ref HashSet<Type> child)
 		{
+			if(child.Contains(type))
+			{
+				return;
+			}
+			child.Add(type);
 			if (type.IsArray)
 			{
 				var elementType = type.GetElementType();
 				elementType.GetRefType(ref child);
-			}
-			else if (type.IsGenericParameter)
-			{
-				return;
 			}
 			else if (type.IsByRef)
 			{
@@ -324,6 +325,22 @@ namespace SMFrame.Editor.Refleaction
 			{
 				var elementType = type.GetElementType();
 				elementType.GetRefType(ref child);
+			}
+			else if(type.IsGenericParameter)
+			{
+				Type[] tpConstraints = type.GetGenericParameterConstraints();
+				foreach (Type tpc in tpConstraints)
+				{
+					tpc.GetRefType(ref child);
+				}
+			}
+			else if(type.IsGenericTypeDefinition)
+			{
+				var genericArguments = type.GetGenericArguments();
+				foreach(var genericArgument in genericArguments)
+				{
+					genericArgument.GetRefType(ref child);
+				}
 			}
 			else if (type.IsGenericType && !type.IsGenericTypeDefinition)
 			{
@@ -336,7 +353,6 @@ namespace SMFrame.Editor.Refleaction
 					para.GetRefType(ref child);
 				}
 			}
-			child.Add(type);
 		}
 
 		static string _prefix = string.Empty;

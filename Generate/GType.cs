@@ -206,6 +206,7 @@ namespace SMFrame.Editor.Refleaction{GetNameSpace()}
 			}
 
 			HashSet<Type> types = new HashSet<Type>();
+			this.type.GetRefType(ref types);
 			foreach(var member in members.Values)
 			{
 				member.GetRefTypes(types);

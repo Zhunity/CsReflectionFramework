@@ -34,12 +34,7 @@ namespace SMFrame.Editor.Refleaction
             sb.AppendLine(declareStr);
 		}
 
-		public override bool IsDeclareInType()
-		{
-			return field.DeclaringType == this.gType.type;
-		}
-
-		private string GetFieldType()
+        private string GetFieldType()
         {
 			return field.FieldType.ToRtypeString("Field"); ;
 		}

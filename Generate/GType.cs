@@ -103,19 +103,6 @@ namespace SMFrame.Editor.Refleaction
 			}
 		}
 
-		private bool AddMember<T>(string name, T member, Dictionary<string, T> m) where T : GMember
-		{
-			if(m.TryGetValue(name, out var result) && result != null && result.IsDeclareInType())
-			{
-				return false;
-			}
-
-			if(!members.TryAdd(name, member))
-			{
-
-			}
-		}
-
 		public override string ToString()
 		{
 			string delcareStr = GetMemberDeclareStr();

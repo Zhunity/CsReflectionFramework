@@ -69,12 +69,7 @@ namespace SMFrame.Editor.Refleaction
 			return GetMethodName(method);
 		}
 
-		public override bool IsDeclareInType()
-		{
-			return method.DeclaringType == this.gType.type;
-		}
-
-		public string GetMethodName(MethodInfo method)
+		 public string GetMethodName(MethodInfo method)
 		{
 			string paramStr = LegalNameConfig.LegalName(method.Name);
 			foreach (var generic in gGenericArguments)

@@ -32,10 +32,5 @@ namespace SMFrame.Editor.Refleaction
 			var declareStr = GetDeclareStr(fieldType, @event.Name, @event.ToString());
 			sb.AppendLine(declareStr);
 		}
-
-		public override bool IsDeclareInType()
-		{
-			return @event.DeclaringType == this.gType.type;
-		}
-	}
+    }
 }

@@ -21,11 +21,6 @@ namespace SMFrame.Editor.Refleaction
 
 		public virtual void GetDeclareStr(StringBuilder sb) { }
 
-		public virtual bool IsDeclareInType()
-		{
-			return true;
-		}
-
 		protected virtual string GetNewParamStr()
 		{
 			return string.Empty;

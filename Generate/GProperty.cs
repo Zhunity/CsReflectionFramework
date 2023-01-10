@@ -43,11 +43,6 @@ namespace SMFrame.Editor.Refleaction
 			sb.AppendLine(declareStr);
 		}
 
-		public override bool IsDeclareInType()
-		{
-			return property.DeclaringType == this.gType.type;
-		}
-
 		private string GetPropertyName(PropertyInfo property)
 		{
 			string paramStr = LegalNameConfig.LegalName(property.Name);

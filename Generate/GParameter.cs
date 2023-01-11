@@ -60,14 +60,9 @@ namespace SMFrame.Editor.Refleaction
 			var paramType = parameter.ParameterType;
 			var paramName = GetName();
 
-			if (!paramType.IsPublic())
+			if (!paramType.IsPublic() || CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
 			{
 				return $"{paramName}.Value";
-			}
-
-			if (CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
-			{
-				return string.Empty;
 			}
 
 			if(paramType.IsByRef) 
@@ -119,7 +114,7 @@ namespace SMFrame.Editor.Refleaction
 				}
 			}
 
-			if(paramType.IsPublic())
+			if(paramType.IsPublic() && !CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
 			{
 				str += paramType.ToClassName(true) + " " + paramName;
 			}
@@ -162,7 +157,7 @@ namespace SMFrame.Editor.Refleaction
 
 			var paramName = GetName();
 
-			if (paramType.IsPublic())
+			if (paramType.IsPublic() && !CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
 			{
 				paramType = paramType.GetElementType();
 				if (paramType.IsPointer)

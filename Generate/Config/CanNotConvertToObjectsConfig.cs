@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Collections;
+using System.Reflection;
 
 namespace SMFrame.Editor.Refleaction
 {
@@ -10,23 +10,35 @@ namespace SMFrame.Editor.Refleaction
 		public static List<Type> CanNotConvertToObjects = new List<Type>()
 		{
 			typeof(TypedReference),
-			typeof(NativeArray<>),
-			typeof(NativeSlice<>),
 			typeof(Span<>),
-			typeof(ReadOnlySpan<>),
 		};
 
 		public static bool CanNot(Type type)
 		{
 			bool canConvertToObject = true;
-			foreach (var canNot in CanNotConvertToObjects)
+
+			HashSet<Type> types = new HashSet<Type>();
+			type.GetRefType(ref types);
+			foreach(var t in types)
 			{
-				if (type.ContainType(canNot))
+				if(CanNotConvertToObjects.Contains(t))
 				{
 					canConvertToObject = false;
 					break;
 				}
+
+				if(t.IsGenericParameter)
+				{
+					GenericParameterAttributes gpa = t.GenericParameterAttributes;
+					GenericParameterAttributes att = gpa & GenericParameterAttributes.SpecialConstraintMask;
+					if ((att & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0)
+					{
+						canConvertToObject = false;
+						break;
+					}
+				}
 			}
+
 			return !canConvertToObject;
 		}
 	}

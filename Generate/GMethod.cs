@@ -126,10 +126,6 @@ namespace SMFrame.Editor.Refleaction
 			for (int i = 0; i < gParameters.Count; i++)
 			{
 				var param = gParameters[i];
-				if (param.CanNotConvertToObjects())
-				{
-					return string.Empty;
-				}
 
 				paramStr += param.GetParamStr();
 				paramDeclareStr += param.GetDeclareStr();
@@ -187,9 +183,9 @@ namespace SMFrame.Editor.Refleaction
 			}
 			bool canConvertToObject = !CanNotConvertToObjectsConfig.CanNot(returnType);
 			bool isPublic = returnType.IsPublic();
-			if(isPublic)
+			if(isPublic && canConvertToObject)
 			{
-				returnTypeStr = (canConvertToObject) ? returnType.ToClassName(true) : typeof(System.Object).ToClassName(true);
+				returnTypeStr = returnType.ToClassName(true);
 
 				if(returnType.IsPointer)
 				{

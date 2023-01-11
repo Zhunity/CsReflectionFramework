@@ -13,7 +13,6 @@ namespace SMFrame.Editor.Refleaction
     {
 		public static HashSet<Type> PrimitiveType = new HashSet<Type>()
 		{
-			typeof(string),
 			typeof(void),
 		};
 
@@ -22,12 +21,7 @@ namespace SMFrame.Editor.Refleaction
 		/// </summary>
 		public static HashSet<Type> BuZhiDaoStruct = new HashSet<Type>()
 		{
-			typeof(Nullable<>),
-#if UNITY_EDITOR
-			typeof(NativeSlice<>),
-			typeof(NativeArray<>),
-			typeof(StyleEnum<>),
-#endif
+
 		};
 
 		/// <summary>
@@ -41,19 +35,8 @@ namespace SMFrame.Editor.Refleaction
 			{
 				return true;
 			}
-			if(type.IsGenericType)
-			{
-				var define = type.GetGenericTypeDefinition();
-				if(BuZhiDaoStruct.Contains(define))
-				{
-					return true;
-				}
-			}
 
-			return 
-				PrimitiveType.Contains(type) ||
-				type.IsGenericParameter ||
-				type.IsEnum || type.IsPrimitive; // int float等值类型
+			return PrimitiveType.Contains(type);
 		}
 	}
 }

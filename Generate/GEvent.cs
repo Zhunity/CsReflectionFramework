@@ -19,6 +19,7 @@ namespace SMFrame.Editor.Refleaction
 
 		public override void GetRefTypes(HashSet<Type> refTypes)
 		{
+			@event.EventHandlerType.GetRefType(ref refTypes);
 		}
 
 		public override string GetDeclareName()

@@ -11,6 +11,7 @@ namespace SMFrame.Editor.Refleaction
 		{
 			typeof(TypedReference),
 			typeof(Span<>),
+			typeof(ReadOnlySpan<>),
 		};
 
 		public static bool CanNot(Type type)

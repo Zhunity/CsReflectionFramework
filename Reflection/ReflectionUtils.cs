@@ -132,5 +132,14 @@ namespace SMFrame.Editor.Refleaction
 			}
 			return obj;
 		}
+
+		public static void Log(string str)
+		{
+#if UNITY_EDITOR
+			UnityEngine.Debug.Log(str);
+#else
+			Console.WriteLine(str);
+#endif
+		}
 	}
 }

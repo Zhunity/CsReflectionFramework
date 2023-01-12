@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using UnityEditor.PackageManager;
-using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace SMFrame.Editor.Refleaction
 {
@@ -51,7 +48,7 @@ namespace SMFrame.Editor.Refleaction
 				string name = gEvent.GetDeclareName();
 				if (!this.events.TryAdd(name, gEvent) || !this.members.TryAdd(name, gEvent))
 				{
-					Debug.Log(type.Name + "ÃÌº”events ß∞‹:" + name + "  " + this.events[name] + " " + this.members[name]);
+					ReflectionUtils.Log(type.Name + "ÃÌº”events ß∞‹:" + name + "  " + this.events[name] + " " + this.members[name]);
 				}
 			}
 
@@ -62,7 +59,7 @@ namespace SMFrame.Editor.Refleaction
 				string name = gField.GetDeclareName();
                 if(!this.fields.TryAdd(name, gField) || !this.members.TryAdd(name, gField))
 				{
-					Debug.Log(type.Name + "ÃÌº”field ß∞‹:" + name);
+					ReflectionUtils.Log(type.Name + "ÃÌº”field ß∞‹:" + name);
 				}
 			}
 
@@ -76,7 +73,7 @@ namespace SMFrame.Editor.Refleaction
 				string name = gProperty.GetDeclareName();
 				if (!this.properties.TryAdd(name, gProperty) || !this.members.TryAdd(name, gProperty))
 				{
-					Debug.Log(type.Name + "ÃÌº”properties ß∞‹:" + name);
+					ReflectionUtils.Log(type.Name + "ÃÌº”properties ß∞‹:" + name);
 				}
 			}
 
@@ -93,7 +90,7 @@ namespace SMFrame.Editor.Refleaction
 				string name = gMethod.GetDeclareName();
 				if (!this.methods.TryAdd(name, gMethod) || !this.members.TryAdd(name, gMethod))
 				{
-					Debug.Log(type.Name + "ÃÌº”methods ß∞‹:" + name);
+					ReflectionUtils.Log(type.Name + "ÃÌº”methods ß∞‹:" + name);
 				}
 			}
 

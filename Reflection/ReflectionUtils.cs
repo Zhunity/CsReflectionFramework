@@ -132,7 +132,7 @@ namespace SMFrame.Editor.Refleaction
 			return obj;
 		}
 
-		public static void Log(string str)
+		public static void Log(object str)
 		{
 #if UNITY_EDITOR
 			UnityEngine.Debug.Log(str);
@@ -141,7 +141,7 @@ namespace SMFrame.Editor.Refleaction
 #endif
 		}
 
-		public static void LogError(string str)
+		public static void LogError(object str)
 		{
 #if UNITY_EDITOR
 			UnityEngine.Debug.LogError(str);

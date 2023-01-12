@@ -33,13 +33,19 @@ namespace SMFrame.Editor.Refleaction
 			while (_waitToGenerate.Count > 0)
 			{
 				i++;
+				Type type = _waitToGenerate.Dequeue();
+				if(type == null)
+				{
+					continue;
+				}
 #if UNITY_EDITOR
-				if (EditorUtility.DisplayCancelableProgressBar("生成文件", $"已生成{i}， 剩余{_waitToGenerate.Count}", (float)i / (float)_waitToGenerate.Count))
+				if (EditorUtility.DisplayCancelableProgressBar("生成文件", $"已生成{i}，正在生成{type.FullName}, 剩余{_waitToGenerate.Count}", (float)i / (float)_waitToGenerate.Count))
 				{
 					break;
 				}
+#else
+				Console.WriteLine($"已生成{i}，正在生成{type.FullName}, 剩余{_waitToGenerate.Count}");
 #endif
-				Type type = _waitToGenerate.Dequeue();
 				try
 				{
 					if (IsPrimitive(type) || _cacheType.Contains(type))
@@ -51,9 +57,7 @@ namespace SMFrame.Editor.Refleaction
 				}
 				catch (Exception e)
 				{
-					#if UNITY_EDITOR
 					ReflectionUtils.LogError(type + "\n" + e.ToString());
-#endif
 				}
 			}
 #if UNITY_EDITOR

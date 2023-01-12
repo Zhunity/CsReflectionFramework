@@ -36,7 +36,7 @@ namespace SMFrame.Editor.Refleaction
 				return true;
 			}
 
-			return PrimitiveType.Contains(type) || type.IsEnum;
+			return PrimitiveType.Contains(type);
 		}
 	}
 }

@@ -71,7 +71,7 @@ namespace SMFrame.Editor.Refleaction
 
 		 public string GetMethodName(MethodInfo method)
 		{
-			string paramStr = LegalNameConfig.LegalName(method.Name);
+			string paramStr = "M" + LegalNameConfig.LegalName(method.Name);
 			foreach (var generic in gGenericArguments)
 			{
 				paramStr += generic.ToFieldName();

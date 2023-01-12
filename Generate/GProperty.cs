@@ -45,7 +45,7 @@ namespace SMFrame.Editor.Refleaction
 
 		private string GetPropertyName(PropertyInfo property)
 		{
-			string paramStr = LegalNameConfig.LegalName(property.Name);
+			string paramStr = "P" + LegalNameConfig.LegalName(property.Name);
 
 			if (gParameters.Count > 0)
 			{

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 using Object = System.Object;
 
 namespace SMFrame.Editor.Refleaction
@@ -88,7 +87,7 @@ namespace SMFrame.Editor.Refleaction
 			}
 			catch(Exception e)
 			{
-				Debug.Log(e.ToString());
+				ReflectionUtils.Log(e.ToString());
 				return null;
 			}
         }

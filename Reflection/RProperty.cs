@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 using Object = System.Object;
 
 namespace SMFrame.Editor.Refleaction
@@ -50,7 +49,7 @@ namespace SMFrame.Editor.Refleaction
 				}
 				catch(Exception ex) 
 				{
-					Debug.LogError(belong.GetType().Name + "\t" + info + "\n" + ex.ToString());
+					ReflectionUtils.LogError(belong.GetType().Name + "\t" + info + "\n" + ex.ToString());
 					return null;
 				}
 			}
@@ -98,7 +97,7 @@ namespace SMFrame.Editor.Refleaction
 		{
 			if (propertyInfo == null)
 			{
-				Debug.LogError("can not find " + name);
+				ReflectionUtils.LogError("can not find " + name);
 				return;
 			}
 			type = propertyInfo.PropertyType;

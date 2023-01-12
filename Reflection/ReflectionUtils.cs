@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 using System.ComponentModel;
 
 namespace SMFrame.Editor.Refleaction
@@ -139,6 +138,15 @@ namespace SMFrame.Editor.Refleaction
 			UnityEngine.Debug.Log(str);
 #else
 			Console.WriteLine(str);
+#endif
+		}
+
+		public static void LogError(string str)
+		{
+#if UNITY_EDITOR
+			UnityEngine.Debug.LogError(str);
+#else
+			Console.WriteLine("[Error]" + str);
 #endif
 		}
 	}

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 using Object = System.Object;
 
 namespace SMFrame.Editor.Refleaction
@@ -53,7 +52,7 @@ namespace SMFrame.Editor.Refleaction
 		{
 			if (fieldInfo == null)
 			{
-				Debug.LogError("can not find " + name);
+				ReflectionUtils.LogError("can not find " + name);
 				return;
 			}
 			type = fieldInfo.FieldType;

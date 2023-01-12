@@ -53,7 +53,7 @@ namespace SMFrame.Editor.Refleaction
 				catch (Exception e)
 				{
 					#if UNITY_EDITOR
-					Debug.LogError(type + "\n" + e.ToString());
+					ReflectionUtils.LogError(type + "\n" + e.ToString());
 #endif
 				}
 			}
@@ -191,7 +191,7 @@ namespace SMFrame.Editor.Refleaction
 				File.Delete(path);
 			}
 			File.WriteAllText(path, generateStr);
-			//Debug.Log(generateStr);
+			//ReflectionUtils.Log(generateStr);
 		}
 
 

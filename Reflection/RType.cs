@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 using Object = System.Object;
 
 namespace SMFrame.Editor.Refleaction
@@ -93,7 +92,7 @@ namespace SMFrame.Editor.Refleaction
 
 			if(instance.GetType() != type)
 			{
-				Debug.LogError($"{instance} is not type {type}");
+				ReflectionUtils.LogError($"{instance} is not type {type}");
 				return;
 			}
 
@@ -183,7 +182,7 @@ namespace SMFrame.Editor.Refleaction
 			var list = type.GetMembers(flags);
 			foreach (var item in list)
 			{
-				Debug.Log("Name:\t\t" + item.Name + "\nReflectedType:\t" + item.ReflectedType + "\nMemberType:\t" + item.MemberType + "\nDeclaringType:\t" + item.DeclaringType);
+				ReflectionUtils.Log("Name:\t\t" + item.Name + "\nReflectedType:\t" + item.ReflectedType + "\nMemberType:\t" + item.MemberType + "\nDeclaringType:\t" + item.DeclaringType);
 			}
 		}
 
@@ -198,8 +197,8 @@ namespace SMFrame.Editor.Refleaction
 				return;
 			}
 
-			Debug.Log("");
-			Debug.Log("----------------------------" + name + "  " + desc + " begin--------------------------------");
+			ReflectionUtils.Log("");
+			ReflectionUtils.Log("----------------------------" + name + "  " + desc + " begin--------------------------------");
 			var list = type.GetMembers(flags);
 			foreach (var item in list)
 			{
@@ -207,17 +206,17 @@ namespace SMFrame.Editor.Refleaction
 				{
 					PropertyInfo info = item as PropertyInfo;
 					object value = RProperty.GetPropertyValue(info, instance);
-					Debug.Log("Name:\t\t" + item.Name + "\nvalue:\t\t" + value + "\nReflectedType:\t" + item.ReflectedType + "\nMemberType:\t" + item.MemberType + "\nPropertyType:\t" + info.PropertyType + "\ndesc:\t\t" + desc);
+					ReflectionUtils.Log("Name:\t\t" + item.Name + "\nvalue:\t\t" + value + "\nReflectedType:\t" + item.ReflectedType + "\nMemberType:\t" + item.MemberType + "\nPropertyType:\t" + info.PropertyType + "\ndesc:\t\t" + desc);
 				}
 				else if (item.MemberType == MemberTypes.Field)
 				{
 					FieldInfo info = item as FieldInfo;
 					object value = RField.GetFieldValue(info, instance);
-					Debug.Log("Name:\t\t" + item.Name + "\nvalue:\t\t" + value + "\nReflectedType:\t" + item.ReflectedType + "\nMemberType:\t" + item.MemberType + "\nFieldType:\t" + info.FieldType + "\ndesc:\t\t" + desc);
+					ReflectionUtils.Log("Name:\t\t" + item.Name + "\nvalue:\t\t" + value + "\nReflectedType:\t" + item.ReflectedType + "\nMemberType:\t" + item.MemberType + "\nFieldType:\t" + info.FieldType + "\ndesc:\t\t" + desc);
 				}
 			}
-			Debug.Log("----------------------------" + name + "  " + desc + " end--------------------------------");
-			Debug.Log("");
+			ReflectionUtils.Log("----------------------------" + name + "  " + desc + " end--------------------------------");
+			ReflectionUtils.Log("");
 		}
 	}
 }

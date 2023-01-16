@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -220,9 +222,24 @@ namespace SMFrame.Editor.Refleaction
 					}
 					result += LegalNameConfig.LegalName(nestedTypeSplit) + "/";
 				}
-
 			}
-			result += $"R{ LegalNameConfig.LegalName(classType.Name)}.cs";
+
+			string className = classType.Name;
+			#region 因为windows上路径不区分大小写，这里在文件里在大写字母前加一个下划线，以区分大小写
+			var upperLetters = Regex.Match(className, "[A-Z]");
+			List<Match> upperLettersIndex = new();
+			while (upperLetters != null && upperLetters != Match.Empty)
+			{
+				upperLettersIndex.Add(upperLetters);
+				upperLetters = upperLetters.NextMatch();
+			}
+			for(int i = upperLettersIndex.Count - 1; i >= 0; i --)
+			{
+				className = className.Insert(upperLettersIndex[i].Index, "_");
+			}
+			#endregion
+
+			result += $"R{ LegalNameConfig.LegalName(className)}.cs";
 			return result;
 		}
 		

@@ -70,7 +70,7 @@ namespace SMFrame.Editor.Refleaction
 		{
 			_waitToGenerate.Clear();
 			_cacheType.Clear();
-			string jsonFile = UnityCSReflectionPath + "FrameWork/Generate/Config/Replace.txt";
+			string jsonFile = UnityCSReflectionPath + "Config/Replace.txt";
 			LegalNameConfig.LoadReplace(jsonFile);
 			GenerateInternal(classType, refType);
 			if(refType)
@@ -105,7 +105,7 @@ namespace SMFrame.Editor.Refleaction
 			ClearGenerateDirectory();
 			_waitToGenerate.Clear();
 			_cacheType.Clear();
-			string jsonFile = UnityCSReflectionPath + "FrameWork/Generate/Config/Replace.txt";
+			string jsonFile = UnityCSReflectionPath + "Config/Replace.txt";
 			LegalNameConfig.LoadReplace(jsonFile);
 			foreach (var type in types)
 			{
@@ -123,7 +123,7 @@ namespace SMFrame.Editor.Refleaction
 			ClearGenerateDirectory();
 			_waitToGenerate.Clear();
 			_cacheType.Clear();
-			string jsonFile = UnityCSReflectionPath + "FrameWork/Generate/Config/Replace.txt";
+			string jsonFile = UnityCSReflectionPath + "Config/Replace.txt";
 			LegalNameConfig.LoadReplace(jsonFile);
 			foreach (var type in types)
 			{
@@ -141,7 +141,7 @@ namespace SMFrame.Editor.Refleaction
 			ClearGenerateDirectory();
 			_waitToGenerate.Clear();
 			_cacheType.Clear();
-			string jsonFile = UnityCSReflectionPath + "FrameWork/Generate/Config/Replace.txt";
+			string jsonFile = UnityCSReflectionPath + "Config/Replace.txt";
 			LegalNameConfig.LoadReplace(jsonFile);
 			foreach (var obj in objs)
 			{

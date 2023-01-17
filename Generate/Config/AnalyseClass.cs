@@ -402,7 +402,7 @@ namespace SMFrame.Editor.Refleaction
 
 		private static bool TranslaterRType(Type t, TypeTranslater translater, out string result)
 		{
-			if (PrimitiveTypeConfig.IsPrimitive(t))
+			if (BlackTypeConfig.IsBlack(t))
 			{
 				result = _prefix;
 				return true;

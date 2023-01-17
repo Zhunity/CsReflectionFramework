@@ -251,7 +251,7 @@ namespace SMFrame.Editor.Refleaction
 		/// <returns></returns>
 		public static bool IsPrimitive(Type type)
 		{
-			return PrimitiveTypeConfig.IsPrimitive(type);
+			return BlackTypeConfig.IsBlack(type);
 		}
 
 		private static void ClearGenerateDirectory()

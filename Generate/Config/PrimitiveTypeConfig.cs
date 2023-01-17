@@ -11,13 +11,15 @@ namespace SMFrame.Editor.Refleaction
 			typeof(void),
 		};
 
-		/// <summary>
-		/// 由于暂时不知道怎么处理泛型中约束是struct的类，先屏蔽处理
-		/// </summary>
-		public static HashSet<Type> BuZhiDaoStruct = new HashSet<Type>()
+		public static void AddPrimitiveType(Type type) 
 		{
+			PrimitiveType.Add(type);
+		}
 
-		};
+		public static void AddPrimitiveType(string type) 
+		{
+			AddPrimitiveType(ReflectionUtils.GetType(type));
+		}
 
 		/// <summary>
 		/// 判断是否是原始类型

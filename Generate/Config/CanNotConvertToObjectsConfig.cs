@@ -5,27 +5,44 @@ using System.Reflection;
 
 namespace SMFrame.Editor.Refleaction
 {
+	/// <summary>
+	/// 判断参数是否是自己的类型，还是R类型
+	/// </summary>
     public class CanNotConvertToObjectsConfig
     {
-		public static List<Type> CanNotConvertToObjects = new List<Type>()
+		public static HashSet<Type> CanNotConvertToObjects = new HashSet<Type>()
 		{
-			typeof(TypedReference),
-			typeof(Span<>),
-			typeof(ReadOnlySpan<>),
 		};
+
+		public static void Add(Type type)
+		{
+			CanNotConvertToObjects.Add(type);
+		}
+
+		public static void Add(string type)
+		{
+			CanNotConvertToObjects.Add(ReflectionUtils.GetType(type));
+		}
 
 		public static bool CanNot(Type type)
 		{
-			bool canConvertToObject = true;
-
 			HashSet<Type> types = new HashSet<Type>();
 			type.GetRefType(ref types);
 			foreach(var t in types)
 			{
 				if(CanNotConvertToObjects.Contains(t))
 				{
-					canConvertToObject = false;
-					break;
+					return true;
+				}
+
+				if(!t.IsPublic)
+				{
+					return true;
+				}
+
+				if(t.IsByRefLike)
+				{
+					return true;
 				}
 
 				if(t.IsGenericParameter)
@@ -34,13 +51,12 @@ namespace SMFrame.Editor.Refleaction
 					GenericParameterAttributes att = gpa & GenericParameterAttributes.SpecialConstraintMask;
 					if ((att & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0)
 					{
-						canConvertToObject = false;
-						break;
+						return true;
 					}
 				}
 			}
 
-			return !canConvertToObject;
+			return false;
 		}
 	}
 }

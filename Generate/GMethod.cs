@@ -180,8 +180,7 @@ namespace SMFrame.Editor.Refleaction
 				return String.Empty;
 			}
 			bool canConvertToObject = !CanNotConvertToObjectsConfig.CanNot(returnType);
-			bool isPublic = returnType.IsPublic();
-			if(isPublic && canConvertToObject)
+			if(canConvertToObject)
 			{
 				returnTypeStr = returnType.ToClassName(true);
 

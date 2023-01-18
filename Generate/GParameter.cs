@@ -60,7 +60,7 @@ namespace SMFrame.Editor.Refleaction
 			var paramType = parameter.ParameterType;
 			var paramName = GetName();
 
-			if (!paramType.IsPublic() || CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
+			if (CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
 			{
 				return $"{paramName}.Value";
 			}
@@ -73,10 +73,6 @@ namespace SMFrame.Editor.Refleaction
 			if (paramType.IsPointer)
 			{
 				paramStr = $"Pointer.Box({paramName}, typeof({paramType.GetElementType().ToDeclareName()}))";
-			}
-			else if (paramType == typeof(TypedReference))
-			{
-				paramStr = $"TypedReference.ToObject({paramName})";
 			}
 			else
 			{
@@ -114,7 +110,7 @@ namespace SMFrame.Editor.Refleaction
 				}
 			}
 
-			if(paramType.IsPublic() && !CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
+			if(!CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
 			{
 				str += paramType.ToClassName(true) + " " + paramName;
 			}
@@ -157,7 +153,7 @@ namespace SMFrame.Editor.Refleaction
 
 			var paramName = GetName();
 
-			if (paramType.IsPublic() && !CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
+			if (!CanNotConvertToObjectsConfig.CanNot(parameter.ParameterType))
 			{
 				paramType = paramType.GetElementType();
 				if (paramType.IsPointer)

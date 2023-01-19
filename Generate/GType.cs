@@ -7,132 +7,134 @@ using System.Text;
 
 namespace SMFrame.Editor.Refleaction
 {
-	/// <summary>
-	/// 
-	/// </summary>
+    /// <summary>
+    /// 
+    /// </summary>
     public class GType
     {
-		List<GGenericArgument> genericArgs = new List<GGenericArgument>();
+        List<GGenericArgument> genericArgs = new List<GGenericArgument>();
 
-        Dictionary<string, GField> fields = new ();
-		Dictionary<string, GProperty> properties = new ();
-		Dictionary<string, GEvent> events = new();
-		Dictionary<string, GMethod> methods = new();
+        Dictionary<string, GField> fields = new();
+        Dictionary<string, GProperty> properties = new();
+        Dictionary<string, GEvent> events = new();
+        Dictionary<string, GMethod> methods = new();
 
-		Dictionary<string, GMember> members = new();
+        Dictionary<string, GMember> members = new();
 
-		HashSet<Type> refs = new HashSet<Type>();
+        HashSet<Type> refs = new HashSet<Type>();
 
-		public Type type;
+        public Type type;
 
         public GType(Type type)
         {
             this.type = type;
 
-			var genericArgs = type.GetGenericArgumentsWithoutDeclareType();
-			for(int i = 0; i < genericArgs.Length; i++)
-			{
-				GGenericArgument arg = new GGenericArgument(genericArgs[i]);
-				this.genericArgs.Add(arg);
-			}
+            var genericArgs = type.GetGenericArgumentsWithoutDeclareType();
+            for (int i = 0; i < genericArgs.Length; i++)
+            {
+                GGenericArgument arg = new GGenericArgument(genericArgs[i]);
+                this.genericArgs.Add(arg);
+            }
 
-			HashSet<MethodInfo> getSetHash = new HashSet<MethodInfo>();
-			// ÒòÎªevent»áºÍfieldÍ¬Ãû£¬ÏÈ»ñÈ¡eventµÄ
-			var events = type.GetEvents(RType.flags);
-			foreach (var @event in events)
-			{
-				getSetHash.Add(@event.AddMethod);
-				getSetHash.Add(@event.RemoveMethod);
-				GEvent gEvent = new(@event);
+            HashSet<MethodInfo> getSetHash = new HashSet<MethodInfo>();
+            // ï¿½ï¿½Îªeventï¿½ï¿½ï¿½fieldÍ¬ï¿½ï¿½ï¿½ï¿½ï¿½È»ï¿½È¡eventï¿½ï¿½
+            var events = type.GetEvents(RType.flags);
+            foreach (var @event in events)
+            {
+                getSetHash.Add(@event.AddMethod);
+                getSetHash.Add(@event.RemoveMethod);
+                GEvent gEvent = new(@event);
 
-				string name = gEvent.GetDeclareName();
-				if (!this.events.TryAdd(name, gEvent) || !this.members.TryAdd(name, gEvent))
-				{
-					ReflectionUtils.Log(type.Name + "Ìí¼ÓeventsÊ§°Ü:" + name + "  " + this.events[name] + " " + this.members[name]);
-				}
-			}
+                string name = gEvent.GetDeclareName();
+                if (!this.events.TryAdd(name, gEvent) || !this.members.TryAdd(name, gEvent))
+                {
+                    ReflectionUtils.Log(type.Name + "ï¿½ï¿½ï¿½ï¿½eventsÊ§ï¿½ï¿½:" + name + "  " + this.events[name] + " " + this.members[name]);
+                }
+            }
 
-			var fields = type.GetFields(RType.flags);
-			foreach (var field in fields)
-			{
+            var fields = type.GetFields(RType.flags);
+            foreach (var field in fields)
+            {
                 GField gField = new(field);
-				string name = gField.GetDeclareName();
-                if(!this.fields.TryAdd(name, gField) || !this.members.TryAdd(name, gField))
-				{
-					ReflectionUtils.Log(type.Name + "Ìí¼ÓfieldÊ§°Ü:" + name);
-				}
-			}
+                string name = gField.GetDeclareName();
+                if (!this.fields.TryAdd(name, gField) || !this.members.TryAdd(name, gField))
+                {
+                    ReflectionUtils.Log(type.Name + "ï¿½ï¿½ï¿½ï¿½fieldÊ§ï¿½ï¿½:" + name);
+                }
+            }
 
-			var properties = type.GetProperties(RType.flags);
-			foreach (var property in properties)
-			{
-				getSetHash.Add(property.GetMethod);
-				getSetHash.Add(property.SetMethod);
-				GProperty gProperty = new(property);
+            var properties = type.GetProperties(RType.flags);
+            foreach (var property in properties)
+            {
+                getSetHash.Add(property.GetMethod);
+                getSetHash.Add(property.SetMethod);
+                GProperty gProperty = new(property);
 
-				string name = gProperty.GetDeclareName();
-				if (!this.properties.TryAdd(name, gProperty) || !this.members.TryAdd(name, gProperty))
-				{
-					ReflectionUtils.Log(type.Name + "Ìí¼ÓpropertiesÊ§°Ü:" + name);
-				}
-			}
+                string name = gProperty.GetDeclareName();
+                if (!this.properties.TryAdd(name, gProperty) || !this.members.TryAdd(name, gProperty))
+                {
+                    ReflectionUtils.Log(type.Name + "ï¿½ï¿½ï¿½ï¿½propertiesÊ§ï¿½ï¿½:" + name);
+                }
+            }
 
-			// ÅÐ¶Ïnew op_Explicit_Decimal
-			var methods = type.GetMethods(RType.flags);
-			foreach (var method in methods)
-			{
-				if (getSetHash.Contains(method))
-				{
-					continue;
-				}
-				GMethod gMethod = new(method);
+            // ï¿½Ð¶ï¿½new op_Explicit_Decimal
+            var methods = type.GetMethods(RType.flags);
+            foreach (var method in methods)
+            {
+                if (getSetHash.Contains(method))
+                {
+                    continue;
+                }
+                GMethod gMethod = new(method);
 
-				string name = gMethod.GetDeclareName();
-				if (!this.methods.TryAdd(name, gMethod) || !this.members.TryAdd(name, gMethod))
-				{
-					ReflectionUtils.Log(type.Name + "Ìí¼ÓmethodsÊ§°Ü:" + name);
-				}
-			}
+                string name = gMethod.GetDeclareName();
+                if (!this.methods.TryAdd(name, gMethod) || !this.members.TryAdd(name, gMethod))
+                {
+                    ReflectionUtils.Log(type.Name + "ï¿½ï¿½ï¿½ï¿½methodsÊ§ï¿½ï¿½:" + name);
+                }
+            }
 
-			foreach(var member in members.Values)
-			{
-				member.gType = this;
-			}
-		}
+            foreach (var member in members.Values)
+            {
+                member.gType = this;
+            }
+        }
 
-		public override string ToString()
-		{
-			string delcareStr = GetMemberDeclareStr();
-			string methodInvoke = GetMethodInvokeStr();
-			#region Ç¶ÈëÀà£¿
-			Type declaringType = type.DeclaringType;
-			var nestedTypeDefine = "";
-			while (declaringType != null)
-			{
-				var nowDefine = $@"public partial class R{declaringType.ToClassName()}
+        public override string ToString()
+        {
+            string externAliasName = GetExternlAiasName();
+            string delcareStr = GetMemberDeclareStr();
+            string methodInvoke = GetMethodInvokeStr();
+            #region Ç¶ï¿½ï¿½ï¿½à£¿
+            Type declaringType = type.DeclaringType;
+            var nestedTypeDefine = "";
+            while (declaringType != null)
+            {
+                var nowDefine = $@"public partial class R{declaringType.ToClassName()}
 {{
 	";
-				nestedTypeDefine = nowDefine + nestedTypeDefine;
-				declaringType = declaringType.DeclaringType;
-			}
-			#endregion
+                nestedTypeDefine = nowDefine + nestedTypeDefine;
+                declaringType = declaringType.DeclaringType;
+            }
+            #endregion
 
-			#region ·ºÐÍÔ¼Êø
-			var genericArgsConstraints = string.Empty;
-			foreach(var genericArg in genericArgs)
-			{
-				genericArgsConstraints += genericArg.ToString();
-			}
-			#endregion
+            #region ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½
+            var genericArgsConstraints = string.Empty;
+            foreach (var genericArg in genericArgs)
+            {
+                genericArgsConstraints += genericArg.ToString();
+            }
+            #endregion
 
-			string headerStr = $@"using SMFrame.Editor.Refleaction;
+            string headerStr = $@"{externAliasName}
+using SMFrame.Editor.Refleaction;
 using System;
 using System.Reflection;
 
 namespace SMFrame.Editor.Refleaction{GetNameSpace()}
 {{";
 
-			string curType = $@"
+            string curType = $@"
 	/// <summary>
 	/// {type.FullName}
 	/// </summary>
@@ -160,80 +162,113 @@ namespace SMFrame.Editor.Refleaction{GetNameSpace()}
     }}
 }}
 ";
-			nestedTypeDefine += curType;
-			declaringType = type.DeclaringType;
-			while (declaringType != null)
-			{
-				nestedTypeDefine += "}";
-				declaringType = declaringType.DeclaringType;
-			}
-			return headerStr + nestedTypeDefine;
-		}
+            nestedTypeDefine += curType;
+            declaringType = type.DeclaringType;
+            while (declaringType != null)
+            {
+                nestedTypeDefine += "}";
+                declaringType = declaringType.DeclaringType;
+            }
+            return headerStr + nestedTypeDefine;
+        }
 
 
-		string GetNameSpace()
-		{
-			if(string.IsNullOrEmpty(type.Namespace))
-			{
-				return string.Empty;
-			}
-			var nameSpaceSplits = type.Namespace.Split(".");
-			string result = ".R";
-			for (int i = 0; i < nameSpaceSplits.Length; i++)
-			{
-				var nameSpaceSplit = nameSpaceSplits[i];
-				if (string.IsNullOrEmpty(nameSpaceSplit))
-				{
-					continue;
-				}
-				result += LegalNameConfig.LegalName(nameSpaceSplit);
-				if(i != nameSpaceSplits.Length - 1)
-				{
-					result += ".R";
-				}
-			}
-			return result;
-		}
+        string GetNameSpace()
+        {
+            string result = string.Empty;
+            if (type.TryGetAliasName(out var aliasName))
+            {
+                result = ".R" + aliasName;
+            }
 
-		public HashSet<Type> GetRefTypes()
-		{
-			if(refs != null && refs.Count > 0)
-			{
-				return refs;
-			}
+            if (!string.IsNullOrEmpty(type.Namespace))
+            {
+                result += ".R";
+                var nameSpaceSplits = type.Namespace.Split(".");
+                for (int i = 0; i < nameSpaceSplits.Length; i++)
+                {
+                    var nameSpaceSplit = nameSpaceSplits[i];
+                    if (string.IsNullOrEmpty(nameSpaceSplit))
+                    {
+                        continue;
+                    }
+                    result += LegalNameConfig.LegalName(nameSpaceSplit);
+                    if (i != nameSpaceSplits.Length - 1)
+                    {
+                        result += ".R";
+                    }
+                }
+            }
 
-			HashSet<Type> types = new HashSet<Type>();
-			this.type.GetRefType(ref types);
-			foreach(var member in members.Values)
-			{
-				member.GetRefTypes(types);
-			}
+            return result;
+        }
 
-			foreach (var type in types)
-			{
-				refs.Add(type.ToBasicType());
-			}
-			return refs;
-		}
+        public HashSet<Type> GetRefTypes()
+        {
+            if (refs != null && refs.Count > 0)
+            {
+                return refs;
+            }
 
-		private string GetMemberDeclareStr()
-		{
-			StringBuilder sb = new StringBuilder();
-			foreach(var member in members.Values)
-			{
-				member.GetDeclareStr(sb);
-			}
-			return sb.ToString();
-		}
+            HashSet<Type> types = new HashSet<Type>();
+            this.type.GetRefType(ref types);
+            foreach (var member in members.Values)
+            {
+                member.GetRefTypes(types);
+            }
 
-		private string GetMethodInvokeStr()
-		{
-			StringBuilder sb = new StringBuilder();
-			foreach (var method in methods.Values)
-			{
-				sb.AppendLine(method.GenerateMethodInvoke());
-			}
-			return sb.ToString();
-		}
-	}
+            foreach (var type in types)
+            {
+                refs.Add(type.ToBasicType());
+            }
+            return refs;
+        }
+
+        private string GetExternlAiasName()
+        {
+            var refTypes = GetRefTypes();
+            if (refTypes.Count <= 0)
+            {
+                return string.Empty;
+            }
+            var aliasName = new HashSet<string>();
+            foreach (var refType in refTypes)
+            {
+                if (refType.TryGetAliasName(out var name))
+                {
+                    aliasName.Add(name);
+                }
+            }
+            if (aliasName.Count <= 0)
+            {
+                return string.Empty;
+            }
+            var result = string.Empty;
+            foreach (var name in aliasName)
+            {
+                result += $"extern alias {name};\n";
+            }
+            return result;
+        }
+
+        private string GetMemberDeclareStr()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var member in members.Values)
+            {
+                member.GetDeclareStr(sb);
+            }
+            return sb.ToString();
+        }
+
+        private string GetMethodInvokeStr()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var method in methods.Values)
+            {
+                sb.AppendLine(method.GenerateMethodInvoke());
+            }
+            return sb.ToString();
+        }
+    }
 }

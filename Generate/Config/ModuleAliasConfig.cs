@@ -10,14 +10,18 @@ namespace SMFrame.Editor.Refleaction
 			ModuleAlias[moduleName] = aliasName;
         }
 
-		public static bool TryGetAliasName(Type type, out string aliasName)
+		public static bool TryGetAliasName(this Type type, out string aliasName)
 		{
 			aliasName = string.Empty;
             if (type == null || type.Module == null || string.IsNullOrEmpty(type.Module.ScopeName))
 			{
 				return false;
 			}
-			return ModuleAlias.TryGetValue(type.Module.ScopeName, out aliasName);
+			if(! ModuleAlias.TryGetValue(type.Module.ScopeName, out aliasName))
+			{
+				return false;
+			}
+			return !string.IsNullOrWhiteSpace(aliasName);
 		}
     }
 }

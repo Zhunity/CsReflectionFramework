@@ -659,5 +659,14 @@ namespace SMFrame.Editor.Refleaction
 			}
 			return $"R{typeStr.Replace(".", ".R").Replace("<", "<R").Replace(", ", ", R")}";
 		}
+
+		public static string GetFullName(this Type type)
+		{
+			if(type.TryGetAliasName(out var aliasName))
+			{
+				return $"{aliasName}::{type.FullName}";
+			}
+			return type.FullName;
+		}
 	}
 }

@@ -205,7 +205,12 @@ namespace SMFrame.Editor.Refleaction
 			string path = classType.FullName.Replace(classType.Name, "");
 			var nameSpaceSplits = path.Split('.');
 			string result = GenerateDirectory;
-			for(int i = 0; i < nameSpaceSplits.Length; i ++)
+            // Âä†dllÂà´Âêç
+            if (ModuleAliasConfig.TryGetAliasName(classType, out var aliasName))
+            {
+                result += $"{aliasName}/";
+            }
+            for (int i = 0; i < nameSpaceSplits.Length; i ++)
 			{
 				var nameSpaceSplit = nameSpaceSplits[i];
 				if(string.IsNullOrEmpty(nameSpaceSplit))

@@ -271,6 +271,11 @@ namespace SMFrame.Editor.Refleaction
 
         public static Type ToBasicType(this Type type)
         {
+			if(type == null)
+			{
+				ReflectionUtils.LogError("type is null");
+				return null;
+			}
 			if (type.IsArray)
 			{
 				var elementType = type.GetElementType();

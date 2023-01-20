@@ -136,7 +136,7 @@ namespace SMFrame.Editor.Refleaction{GetNameSpace()}
 
             string curType = $@"
 	/// <summary>
-	/// {type.FullName}
+	/// {type.GetFullName()}
 	/// </summary>
     public partial class R{type.ToClassName()} : RMember //{genericArgsConstraints}
     {{

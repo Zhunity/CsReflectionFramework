@@ -543,18 +543,22 @@ namespace SMFrame.Editor.Refleaction
 				result = declareStr + "." + result;
 				return result;
 			}
-			else if(string.IsNullOrEmpty(type.Namespace))
-			{
-				return name;
-			}
 			else
 			{
-				var nameSpaceSplit = type.Namespace.Split(".");
-				string result = string.Empty;
-				foreach(var item in nameSpaceSplit)
+                string result = string.Empty;
+				if(ModuleAliasConfig.TryGetAliasName(type, out var aliasName))
 				{
-					result += LegalNameConfig.LegalName(item) + ".";
-				}
+					result += aliasName + "::";
+                }
+                if (!string.IsNullOrEmpty(type.Namespace))
+				{
+                    var nameSpaceSplit = type.Namespace.Split(".");
+                    foreach (var item in nameSpaceSplit)
+                    {
+                        result += LegalNameConfig.LegalName(item) + ".";
+                    }
+                }
+				
 				result += name;
 				return result;
 			}
@@ -657,7 +661,7 @@ namespace SMFrame.Editor.Refleaction
 			{
 				return string.Empty;
 			}
-			return $"R{typeStr.Replace(".", ".R").Replace("<", "<R").Replace(", ", ", R")}";
+			return $"R{typeStr.Replace("::", ".R").Replace(".", ".R").Replace("<", "<R").Replace(", ", ", R")}";
 		}
 
 		public static string GetFullName(this Type type)

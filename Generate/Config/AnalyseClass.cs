@@ -661,7 +661,7 @@ namespace SMFrame.Editor.Refleaction
 			{
 				return string.Empty;
 			}
-			return $"R{typeStr.Replace("::", ".R").Replace(".", ".R").Replace("<", "<R").Replace(", ", ", R")}";
+			return $"SMFrame.Editor.Refleaction.R{typeStr.Replace("::", ".").Replace(".", ".R").Replace("<", "<SMFrame.Editor.Refleaction.R").Replace(", ", ", SMFrame.Editor.Refleaction.R")}";
 		}
 
 		public static string GetFullName(this Type type)

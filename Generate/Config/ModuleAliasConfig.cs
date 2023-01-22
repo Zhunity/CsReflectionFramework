@@ -3,12 +3,12 @@ namespace SMFrame.Editor.Refleaction
 {
 	public static class ModuleAliasConfig
 	{
-		static Dictionary<string, string> ModuleAlias = new Dictionary<string, string>();
+		static Dictionary<string, string> ModuleToAlias = new Dictionary<string, string>();
 
 		public static void Set(string moduleName, string aliasName)
 		{
-			ModuleAlias[moduleName] = aliasName;
-        }
+			ModuleToAlias[moduleName] = aliasName;
+		}
 
 		public static bool TryGetAliasName(this Type type, out string aliasName)
 		{
@@ -17,11 +17,17 @@ namespace SMFrame.Editor.Refleaction
 			{
 				return false;
 			}
-			if(! ModuleAlias.TryGetValue(type.Module.ScopeName, out aliasName))
+			if(! ModuleToAlias.TryGetValue(type.Module.ScopeName, out aliasName))
 			{
 				return false;
 			}
 			return !string.IsNullOrWhiteSpace(aliasName);
+		}
+
+		public static bool IsThisModule(this Type type, string aliasName) 
+		{
+			type.TryGetAliasName(out var typeAliasName);
+			return typeAliasName.Equals(aliasName);
 		}
     }
 }

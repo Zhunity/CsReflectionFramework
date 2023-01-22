@@ -37,17 +37,35 @@ namespace SMFrame.Editor.Refleaction
 				return type;
 			}
 
+			var names = typeName.Split("::");
+			var aliasName = string.Empty;
+			if(names.Length >= 2)
+			{
+				aliasName = names[0];
+				typeName = names[1];
+			}
+			else
+			{
+				aliasName = string.Empty;
+				typeName = names[0];
+			}
+			
 
 			Assembly[] assemblyArray = AppDomain.CurrentDomain.GetAssemblies();
 			int assemblyArrayLength = assemblyArray.Length;
 			for (int i = 0; i < assemblyArrayLength; ++i)
 			{
 				type = assemblyArray[i].GetType(typeName);
-				if (type != null)
+				if (type == null)
 				{
-					_typeCache.Add(typeName, type);
-					return type;
+					continue;
 				}
+				if (!type.IsThisModule(aliasName))
+				{
+					continue;
+				}
+				_typeCache.Add(typeName, type);
+				return type;
 			}
 
 			for (int i = 0; (i < assemblyArrayLength); ++i)
@@ -56,11 +74,16 @@ namespace SMFrame.Editor.Refleaction
 				int typeArrayLength = typeArray.Length;
 				for (int j = 0; j < typeArrayLength; ++j)
 				{
-					if (typeArray[j].Name.Equals(typeName))
+					if (!typeArray[j].Name.Equals(typeName))
 					{
-						_typeCache.Add(typeName, typeArray[j]);
-						return typeArray[j];
+						continue;
 					}
+					if (!typeArray[j].IsThisModule(aliasName))
+					{
+						continue;
+					}
+					_typeCache.Add(typeName, typeArray[j]);
+					return typeArray[j];
 				}
 			}
 			return type;

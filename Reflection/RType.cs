@@ -59,7 +59,7 @@ namespace SMFrame.Editor.Refleaction
 			this.type = type;
 			this.genericCount = genericCount;
 			this.types = types;
-			name = type.FullName;
+			name = type.GetFullName();
 			memberList.Clear();
 		}
 

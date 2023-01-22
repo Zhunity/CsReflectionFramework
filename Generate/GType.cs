@@ -142,11 +142,11 @@ namespace SMFrame.Editor.Refleaction{GetNameSpace()}
     {{
 {delcareStr}
 
-        public R{type.ToConstructorName()}() : base(""{type.FullName}"")
+        public R{type.ToConstructorName()}() : base(""{type.GetFullName()}"")
         {{
         }}
 
-        public R{type.ToConstructorName()}(System.Object instance) : base(""{type.FullName}"")
+        public R{type.ToConstructorName()}(System.Object instance) : base(""{type.GetFullName()}"")
 		{{
             SetInstance(instance);
 		}}

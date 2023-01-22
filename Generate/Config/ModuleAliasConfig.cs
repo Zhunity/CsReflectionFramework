@@ -26,7 +26,10 @@ namespace SMFrame.Editor.Refleaction
 
 		public static bool IsThisModule(this Type type, string aliasName) 
 		{
-			type.TryGetAliasName(out var typeAliasName);
+			if(!type.TryGetAliasName(out var typeAliasName))
+			{
+				return string.IsNullOrEmpty(aliasName);
+			}
 			return typeAliasName.Equals(aliasName);
 		}
     }

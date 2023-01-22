@@ -233,7 +233,7 @@ namespace SMFrame.Editor.Refleaction
 			}
 			else
 			{
-				result = $" ReflectionUtils.GetType(\"{t.FullName}\")";
+				result = $" ReflectionUtils.GetType(\"{t.GetFullName()}\")";
 			}
 			return true;
 		}

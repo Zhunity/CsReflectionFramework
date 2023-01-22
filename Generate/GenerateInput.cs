@@ -46,7 +46,7 @@ namespace SMFrame.Editor.Refleaction
 					break;
 				}
 #else
-				Console.WriteLine($"已生成{i}，正在生成{type.FullName}, 剩余{_waitToGenerate.Count}");
+				Console.WriteLine($"已生成{i}，正在生成{type.GetFullName()}, 剩余{_waitToGenerate.Count}");
 #endif
 				try
 				{

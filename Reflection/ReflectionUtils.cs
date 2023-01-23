@@ -39,15 +39,16 @@ namespace SMFrame.Editor.Refleaction
 
 			var names = typeName.Split("::");
 			var aliasName = string.Empty;
+			var fullName = string.Empty;
 			if(names.Length >= 2)
 			{
 				aliasName = names[0];
-				typeName = names[1];
+				fullName = names[1];
 			}
 			else
 			{
 				aliasName = string.Empty;
-				typeName = names[0];
+				fullName = names[0];
 			}
 			
 
@@ -55,7 +56,7 @@ namespace SMFrame.Editor.Refleaction
 			int assemblyArrayLength = assemblyArray.Length;
 			for (int i = 0; i < assemblyArrayLength; ++i)
 			{
-				type = assemblyArray[i].GetType(typeName);
+				type = assemblyArray[i].GetType(fullName);
 				if (type == null)
 				{
 					continue;
@@ -74,7 +75,7 @@ namespace SMFrame.Editor.Refleaction
 				int typeArrayLength = typeArray.Length;
 				for (int j = 0; j < typeArrayLength; ++j)
 				{
-					if (!typeArray[j].Name.Equals(typeName))
+					if (!typeArray[j].Name.Equals(fullName))
 					{
 						continue;
 					}

@@ -78,6 +78,14 @@ namespace SMFrame.Editor.Refleaction
 			return instance;
 		}
 
+		public T CreateInatance<T>() where T : RType, new()
+		{
+			T rt = new T();
+			var instace = Activator.CreateInstance(rt.type);
+			rt.SetInstance(instace);
+			return rt;
+		}
+
 		/// <summary>
 		/// 设置实例
 		/// </summary>

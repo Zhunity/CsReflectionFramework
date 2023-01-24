@@ -78,7 +78,7 @@ namespace SMFrame.Editor.Refleaction
 			return instance;
 		}
 
-		public T CreateInatance<T>() where T : RType, new()
+		public static T CreateInatance<T>() where T : RType, new()
 		{
 			T rt = new T();
 			var instace = Activator.CreateInstance(rt.type);
@@ -98,7 +98,8 @@ namespace SMFrame.Editor.Refleaction
 				return;
 			}
 
-			if(instance.GetType() != type)
+			var instanceType = instance.GetType();
+			if(instanceType != type && !instanceType.IsSubclassOf(type))
 			{
 				ReflectionUtils.LogError($"{instance} is not type {type}");
 				return;

@@ -10,8 +10,8 @@ using UnityEditor;
 
 namespace SMFrame.Editor.Refleaction
 {
-    public partial class GenerateInput 
-    {
+	public partial class GenerateInput
+	{
 		public static string UnityCSReflectionPath;
 
 		public static string GenerateDirectory
@@ -36,7 +36,7 @@ namespace SMFrame.Editor.Refleaction
 			{
 				i++;
 				Type type = _waitToGenerate.Dequeue();
-				if(type == null)
+				if (type == null)
 				{
 					continue;
 				}
@@ -67,7 +67,7 @@ namespace SMFrame.Editor.Refleaction
 #endif
 		}
 
-#region 生成单个
+		#region 生成单个
 		public static void Generate(Type classType, bool refType = true)
 		{
 			_waitToGenerate.Clear();
@@ -75,7 +75,7 @@ namespace SMFrame.Editor.Refleaction
 			string jsonFile = UnityCSReflectionPath + "Config/Replace.txt";
 			LegalNameConfig.LoadReplace(jsonFile);
 			GenerateInternal(classType, refType);
-			if(refType)
+			if (refType)
 			{
 				GenerateClasses();
 			}
@@ -99,9 +99,9 @@ namespace SMFrame.Editor.Refleaction
 		{
 			Generate(instance.GetType());
 		}
-#endregion
+		#endregion
 
-#region 生成多个
+		#region 生成多个
 		public static void Generate(IEnumerable<Type> types)
 		{
 			ClearGenerateDirectory();
@@ -148,7 +148,7 @@ namespace SMFrame.Editor.Refleaction
 			foreach (var obj in objs)
 			{
 				Type type;
-				switch(obj)
+				switch (obj)
 				{
 					case Type t:
 						type = t;
@@ -168,20 +168,20 @@ namespace SMFrame.Editor.Refleaction
 			AssetDatabase.Refresh();
 #endif
 		}
-#endregion
+		#endregion
 
 		public static void GenerateInternal(Type classType, bool refType = true)
 		{
 			classType = classType.ToBasicType();
 			GType gType = new GType(classType);
-			if(refType)
+			if (refType)
 			{
 				var types = gType.GetRefTypes();
 				foreach (var type in types)
 				{
 					AddGenerateClass(type);
 				}
-			}	
+			}
 
 			var generateStr = gType.ToString();
 			var path = GetPath(classType);
@@ -205,46 +205,55 @@ namespace SMFrame.Editor.Refleaction
 			string path = classType.FullName.Replace(classType.Name, "");
 			var nameSpaceSplits = path.Split('.');
 			string result = GenerateDirectory;
-            // 脗盲鈥燿ll脗脿麓脗锚莽
-            if (ModuleAliasConfig.TryGetAliasName(classType, out var aliasName))
-            {
-                result += $"{aliasName}/";
-            }
-            for (int i = 0; i < nameSpaceSplits.Length; i ++)
+			// 脗盲鈥燿ll脗脿麓脗锚莽
+			if (ModuleAliasConfig.TryGetAliasName(classType, out var aliasName))
+			{
+				result += $"{AddLineBeforeUpper(LegalNameConfig.LegalName(aliasName))}/";
+			}
+			for (int i = 0; i < nameSpaceSplits.Length; i++)
 			{
 				var nameSpaceSplit = nameSpaceSplits[i];
-				if(string.IsNullOrEmpty(nameSpaceSplit))
+				if (string.IsNullOrEmpty(nameSpaceSplit))
 				{
 					continue;
 				}
 				var nestedTypeSplits = nameSpaceSplit.Split('+');
-				for(int j = 0; j < nestedTypeSplits.Length; j ++)
+				for (int j = 0; j < nestedTypeSplits.Length; j++)
 				{
 					var nestedTypeSplit = nestedTypeSplits[j];
 					if (string.IsNullOrEmpty(nestedTypeSplit))
 					{
 						continue;
 					}
-					result += LegalNameConfig.LegalName(nestedTypeSplit) + "/";
+					result += AddLineBeforeUpper(LegalNameConfig.LegalName(nestedTypeSplit)) + "/";
 				}
 			}
 
-			string className = classType.Name;
-			#region 因为windows上路径不区分大小写，这里在文件里在大写字母前加一个下划线，以区分大小写
-			var upperLetters = Regex.Match(className, "[A-Z]");
+			string className = AddLineBeforeUpper(classType.Name);
+
+			result += $"R{LegalNameConfig.LegalName(className)}.cs";
+			return result;
+		}
+
+		/// <summary>
+		/// 因为windows上路径不区分大小写，这里在文件里在大写字母前加一个下划线，以区分大小写
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		private static string AddLineBeforeUpper(string str)
+		{
+			string result = str;
+			var upperLetters = Regex.Match(str, "[A-Z]");
 			List<Match> upperLettersIndex = new();
 			while (upperLetters != null && upperLetters != Match.Empty)
 			{
 				upperLettersIndex.Add(upperLetters);
 				upperLetters = upperLetters.NextMatch();
 			}
-			for(int i = upperLettersIndex.Count - 1; i >= 0; i --)
+			for (int i = upperLettersIndex.Count - 1; i >= 0; i--)
 			{
-				className = className.Insert(upperLettersIndex[i].Index, "_");
+				result = result.Insert(upperLettersIndex[i].Index, "_");
 			}
-			#endregion
-
-			result += $"R{ LegalNameConfig.LegalName(className)}.cs";
 			return result;
 		}
 		

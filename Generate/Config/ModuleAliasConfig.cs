@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace SMFrame.Editor.Refleaction
 {
 	public static class ModuleAliasConfig

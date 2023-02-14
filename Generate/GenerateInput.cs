@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 #endif
 
-namespace SMFrame.Editor.Refleaction
+namespace Hvak.Editor.Refleaction
 {
 	public partial class GenerateInput
 	{

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace SMFrame.Editor.Refleaction
+namespace Hvak.Editor.Refleaction
 {
     public class LegalNameConfig
     {

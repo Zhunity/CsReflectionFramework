@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace SMFrame.Editor.Refleaction
+namespace Hvak.Editor.Refleaction
 {
     /// <summary>
     /// 
@@ -127,11 +127,11 @@ namespace SMFrame.Editor.Refleaction
             #endregion
 
             string headerStr = $@"{externAliasName}
-using SMFrame.Editor.Refleaction;
+using Hvak.Editor.Refleaction;
 using System;
 using System.Reflection;
 
-namespace SMFrame.Editor.Refleaction{GetNameSpace()}
+namespace Hvak.Editor.Refleaction{GetNameSpace()}
 {{";
 
             string curType = $@"

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Object = System.Object;
 
-namespace SMFrame.Editor.Refleaction
+namespace Hvak.Editor.Refleaction
 {
 	/// <summary>
 	/// 一个对象里面的成员

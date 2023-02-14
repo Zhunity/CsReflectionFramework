@@ -5,7 +5,7 @@ using System.Reflection;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace SMFrame.Editor.Refleaction
+namespace Hvak.Editor.Refleaction
 {
 	public delegate bool Translate(Type t, TypeTranslater translater, out string result);
 	public delegate string Format(params string[] args);
@@ -661,7 +661,7 @@ namespace SMFrame.Editor.Refleaction
 			{
 				return string.Empty;
 			}
-			return $"SMFrame.Editor.Refleaction.R{typeStr.Replace("::", ".").Replace(".", ".R").Replace("<", "<SMFrame.Editor.Refleaction.R").Replace(", ", ", SMFrame.Editor.Refleaction.R")}";
+			return $"Hvak.Editor.Refleaction.R{typeStr.Replace("::", ".").Replace(".", ".R").Replace("<", "<Hvak.Editor.Refleaction.R").Replace(", ", ", Hvak.Editor.Refleaction.R")}";
 		}
 
 		public static string GetFullName(this Type type)

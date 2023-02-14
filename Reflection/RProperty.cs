@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Object = System.Object;
 
-namespace SMFrame.Editor.Refleaction
+namespace Hvak.Editor.Refleaction
 {
 	public class RProperty : RMember
 	{

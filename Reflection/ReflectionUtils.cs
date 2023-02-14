@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.ComponentModel;
 
-namespace SMFrame.Editor.Refleaction
+namespace Hvak.Editor.Refleaction
 {
 	/// <summary>
 	/// 通用的有返回值类型的委托

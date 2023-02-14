@@ -41,26 +41,21 @@ namespace Hvak.Editor.Refleaction
 		/// 毕竟主工程中可能拿不到该类型，只能通过传名字来完成操作
 		/// </summary>
 		/// <param name="type"></param>
-		public RType(string type, int genericCount = -1, params Type[] types)
+		public RType(string type, int genericCount = -1, params Type[] types) : this(ReflectionUtils.GetType(type), genericCount, types)
 		{
-			this.genericCount = genericCount;
-			this.types = types;
-			this.type = ReflectionUtils.GetType(type);
-			name = type;
-			memberList.Clear();
 		}
 
 		/// <summary>
 		/// 直接传进类型，省去查找类型的过程
+		/// 先执行:this(),再执行这个，类比:base
 		/// </summary>
 		/// <param name="type"></param>
-		public RType(Type type, int genericCount = -1, params Type[] types)
+		public RType(Type type, int genericCount = -1, params Type[] types) : this()
 		{
 			this.type = type;
 			this.genericCount = genericCount;
 			this.types = types;
 			name = type.GetFullName();
-			memberList.Clear();
 		}
 
 		public RType(object instance) : this(instance.GetType())

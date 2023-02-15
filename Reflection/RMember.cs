@@ -41,9 +41,17 @@ namespace Hvak.Editor.Refleaction
 		/// </summary>
 		/// <param name="belongMember"></param>
 		/// <param name="name"></param>
-		public RMember(RType belongMember, string name, int genericCount = -1, params Type[] types) : this(belongMember?.type, name, genericCount, types)
+		public RMember(RType belongMember, string name, int genericCount = -1, params Type[] types)
 		{
+			this.genericCount = genericCount;
+			this.types = types;
+			var belongType = belongMember?.type;
+			SetInfo(belongType, name);
+			SetBelongType(belongType);
+			SetName(name);
+			SetType();
 			belongMember.AddMember(this as RMember);
+			OnInit();
 		}
 
 		/// <summary>
@@ -61,6 +69,7 @@ namespace Hvak.Editor.Refleaction
 			SetBelongType(belongType);
 			SetName(name);
 			SetType();
+			OnInit();
 		}
 
 		/// <summary>

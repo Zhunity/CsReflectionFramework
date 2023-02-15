@@ -48,6 +48,7 @@ namespace Hvak.Editor.Refleaction
 			this.type = ReflectionUtils.GetType(type);
 			name = type;
 			memberList.Clear();
+			OnInit();
 		}
 
 		/// <summary>
@@ -61,6 +62,12 @@ namespace Hvak.Editor.Refleaction
 			this.types = types;
 			name = type.GetFullName();
 			memberList.Clear();
+			OnInit();
+		}
+
+		protected virtual void OnInit()
+		{
+
 		}
 
 		public RType(object instance) : this(instance.GetType())

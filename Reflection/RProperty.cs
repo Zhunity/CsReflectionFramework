@@ -18,12 +18,10 @@ namespace Hvak.Editor.Refleaction
 		{
 		}
 
-
-
 		/// <summary>
 		/// 设置PropertyInfo值的静态类，供Mermber、Property用
 		/// </summary>
-		public static object GetPropertyValue(PropertyInfo info, object belong)
+		public static object GetPropertyValue(PropertyInfo info, object belong, params object[] index)
 		{
 			// 判断静态类型
 			if (belong == null && !info.GetMethod.IsStatic)
@@ -33,27 +31,22 @@ namespace Hvak.Editor.Refleaction
 
 			// 参数个数大于0，表示是索引器
 			// 返回索引器的函数，供外面调用
-			if (info.GetIndexParameters().Length > 0)
+			try
 			{
-				UniversalFunc indexer = (object[] param) =>
+				if (info.GetIndexParameters().Length > 0)
 				{
-					return info.GetValue(belong, param);
-				};
-				return indexer;
-			}
-			else
-			{
-				try
+					return info.GetValue(belong, index);
+				}
+				else
 				{
 					return info.GetValue(belong);
 				}
-				catch(Exception ex) 
-				{
-					ReflectionUtils.LogError(belong.GetType().Name + "\t" + info + "\n" + ex.ToString());
-					return null;
-				}
 			}
-
+			catch (Exception ex)
+			{
+				ReflectionUtils.LogError(belong.GetType().Name + "\t" + info + "\n" + ex.ToString());
+				return null;
+			}
 		}
 
 		public override void SetValue(object value)
@@ -77,6 +70,11 @@ namespace Hvak.Editor.Refleaction
 		public override object GetValue()
 		{
 			return GetPropertyValue(propertyInfo, belong);
+		}
+
+		public virtual object GetValue(params object[] index)
+		{
+			return GetPropertyValue(propertyInfo, belong, index);
 		}
 
 		/// <summary>

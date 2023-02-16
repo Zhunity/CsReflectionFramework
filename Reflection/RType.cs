@@ -106,7 +106,7 @@ namespace Hvak.Editor.Refleaction
 			}
 
 			var instanceType = instance.GetType();
-			if(instanceType != type && !instanceType.IsSubclassOf(type))
+			if (!type.IsAssignableFrom(instanceType))
 			{
 				ReflectionUtils.LogError($"{instance} is not type {type}");
 				return;

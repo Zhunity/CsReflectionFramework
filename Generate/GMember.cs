@@ -30,7 +30,7 @@ namespace Hvak.Editor.Refleaction
 			string staticFieldStr = isStatic ? "static " : string.Empty;
 			string statiPropertyStr = isStatic ? "static " : "virtual ";
 			string belong = isStatic ? gType.type.ToGetMethod() : "this";
-			string setBelong = isStatic ? "null" : "this.instance";
+			string setBelong = isStatic ? "null" : "this.GetValue()";
 			string declareName = GetDeclareName();
 			string protectedName = "r_" + declareName;
 			string publicName = "R" + declareName;

@@ -80,7 +80,12 @@ namespace Hvak.Editor.Refleaction
 		/// <returns></returns>
 		protected virtual void SetInfo(Type belongType, string name)
 		{
-			memberInfo = belongType.GetMember(name, flags).First();
+			var infos = belongType.GetMember(name, flags);
+			if(infos == null || infos.Length <= 0)
+			{
+				return;
+			}
+			memberInfo = infos.First();
 		}
 
 		/// <summary>

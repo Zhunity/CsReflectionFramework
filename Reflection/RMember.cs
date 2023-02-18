@@ -51,6 +51,7 @@ namespace Hvak.Editor.Refleaction
 			SetName(name);
 			SetType();
 			belongMember.AddMember(this as RMember);
+			SetBelong(belongMember);
 			OnInit();
 		}
 
@@ -157,7 +158,7 @@ namespace Hvak.Editor.Refleaction
 			OnSetBelong();
 		}
 
-		public void SetBelong(RMember belong)
+		public void SetBelong(RType belong)
 		{
 			var obj = belong?.GetValue();
 			SetBelong(obj);

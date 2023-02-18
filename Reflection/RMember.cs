@@ -180,6 +180,7 @@ namespace Hvak.Editor.Refleaction
 			if (memberInfo == null)
 			{
 				base.SetValue(value);
+				return;
 			}
 
 			// 兼容Property， RField
@@ -188,6 +189,29 @@ namespace Hvak.Editor.Refleaction
 				// TODO 可能索引器需要注意
 				PropertyInfo info = memberInfo as PropertyInfo;
 				info.SetValue(belong, value);
+			}
+			else if (memberInfo.MemberType == MemberTypes.Field)
+			{
+				FieldInfo info = memberInfo as FieldInfo;
+				info.SetValue(belong, value);
+			}
+		}
+
+		public virtual void SetValue(object value, params object[] index)
+		{
+			// 兼容Class
+			if (memberInfo == null)
+			{
+				base.SetValue(value);
+				return;
+			}
+
+			// 兼容Property， RField
+			if (memberInfo.MemberType == MemberTypes.Property)
+			{
+				// TODO 可能索引器需要注意
+				PropertyInfo info = memberInfo as PropertyInfo;
+				info.SetValue(belong, value, index);
 			}
 			else if (memberInfo.MemberType == MemberTypes.Field)
 			{
@@ -205,7 +229,7 @@ namespace Hvak.Editor.Refleaction
 			// 兼容Class
 			if (memberInfo == null)
 			{
-				return instance;
+				return base.GetValue();
 			}
 
 			// 兼容Property， RField
@@ -213,6 +237,28 @@ namespace Hvak.Editor.Refleaction
 			{
 				PropertyInfo info = memberInfo as PropertyInfo;
 				return RProperty.GetPropertyValue(info, belong);
+			}
+			else if (memberInfo.MemberType == MemberTypes.Field)
+			{
+				FieldInfo info = memberInfo as FieldInfo;
+				return RField.GetFieldValue(info, belong);
+			}
+			return null;
+		}
+
+		public virtual object GetValue(params object[] index)
+		{
+			// 兼容Class
+			if (memberInfo == null)
+			{
+				return base.GetValue();
+			}
+
+			// 兼容Property， RField
+			if (memberInfo.MemberType == MemberTypes.Property)
+			{
+				PropertyInfo info = memberInfo as PropertyInfo;
+				return RProperty.GetPropertyValue(info, belong, index);
 			}
 			else if (memberInfo.MemberType == MemberTypes.Field)
 			{

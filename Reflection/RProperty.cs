@@ -59,6 +59,16 @@ namespace Hvak.Editor.Refleaction
 			propertyInfo.SetValue(belong, value);
 		}
 
+		public override void SetValue(object value, params object[] index)
+		{
+			if (belong == null && !propertyInfo.SetMethod.IsStatic)
+			{
+				return;
+			}
+
+			propertyInfo.SetValue(belong, value, index);
+		}
+
 		/// <summary>
 		/// 数组会有问题
 		/// 如RPackageItem.Item
@@ -72,7 +82,7 @@ namespace Hvak.Editor.Refleaction
 			return GetPropertyValue(propertyInfo, belong);
 		}
 
-		public virtual object GetValue(params object[] index)
+		public override object GetValue(params object[] index)
 		{
 			return GetPropertyValue(propertyInfo, belong, index);
 		}

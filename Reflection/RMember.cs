@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Object = System.Object;
@@ -17,7 +15,7 @@ namespace Hvak.Editor.Refleaction
 		protected virtual MemberInfo memberInfo { get; set; }   // 反射出来的信息
 		public Type belongType;         // 在哪个类里面反射出来的成员
 		public Object belong;           // 所属的实例对象
-		public RType rBelong;			// 所属实力对象的R类型
+		public RType rBelong;           // 所属实力对象的R类型
 
 		#region 初始化类型数据
 		/// <summary>
@@ -81,7 +79,7 @@ namespace Hvak.Editor.Refleaction
 		protected virtual void SetInfo(Type belongType, string name)
 		{
 			var infos = belongType.GetMember(name, flags);
-			if(infos == null || infos.Length <= 0)
+			if (infos == null || infos.Length <= 0)
 			{
 				return;
 			}
@@ -112,7 +110,7 @@ namespace Hvak.Editor.Refleaction
 		/// </summary>
 		protected virtual void SetType()
 		{
-			if(memberInfo == null)
+			if (memberInfo == null)
 			{
 				return;
 			}
@@ -141,7 +139,7 @@ namespace Hvak.Editor.Refleaction
 				return;
 			}
 			var belongType = belong.GetType();
-			if(!this.belongType.IsAssignableFrom(belongType))
+			if (!this.belongType.IsAssignableFrom(belongType))
 			{
 				ReflectionUtils.LogError($"{belong} is not type {this.belongType}");
 				return;
@@ -159,7 +157,7 @@ namespace Hvak.Editor.Refleaction
 
 		public void SetBelong(RType belong)
 		{
-			if(belong != rBelong)
+			if (belong != rBelong)
 			{
 				if (!CheckCanAddMember(belong))
 				{
@@ -290,7 +288,7 @@ namespace Hvak.Editor.Refleaction
 			{
 				return false;
 			}
-			return mbelong.CheckCanAddMember(this);
+			return CheckCanAddMember(mbelong.rBelong);
 		}
 	}
 }

@@ -10,7 +10,7 @@ namespace Hvak.Editor.Refleaction
 	{
 		static Type[] Empty = new Type[] { };
 
-		MethodInfo methodInfo;
+		protected new MethodInfo memberInfo { get; set; }
 
 
 		public RMethod(RType belongMember, string name, int genericCount = -1, params Type[] types) : base(belongMember, name, genericCount, types)
@@ -27,16 +27,16 @@ namespace Hvak.Editor.Refleaction
 			{
 				if(types == null)
 				{
-                    methodInfo = belongType.GetMethod(name, flags);
+                    memberInfo = belongType.GetMethod(name, flags);
                 }
 				else
 				{
-                    methodInfo = belongType.GetMethod(name, flags, null, types, null);
+                    memberInfo = belongType.GetMethod(name, flags, null, types, null);
                 }
 			}
 			else
 			{
-                methodInfo = belongType.GetMethod(name, genericCount, flags, null, types ?? Empty, null);
+                memberInfo = belongType.GetMethod(name, genericCount, flags, null, types ?? Empty, null);
             }          
         }
 
@@ -47,11 +47,11 @@ namespace Hvak.Editor.Refleaction
 		/// <returns></returns>
 		public Delegate CreateDelegate(Type delegateType)
 		{
-            if (methodInfo == null || (belong == null && !methodInfo.IsStatic))
+            if (memberInfo == null || (belong == null && !memberInfo.IsStatic))
             {
 				return null;
 			}
-			return methodInfo.CreateDelegate(delegateType, belong);
+			return memberInfo.CreateDelegate(delegateType, belong);
 		}
 
 		/// <summary>
@@ -61,28 +61,28 @@ namespace Hvak.Editor.Refleaction
 		/// <returns></returns>
 		public object Invoke(params object[] parameters)
 		{
-			if(methodInfo == null || (belong == null && !methodInfo.IsStatic))
+			if(memberInfo == null || (belong == null && !memberInfo.IsStatic))
 			{
 				return null;
 			}
-			return methodInfo.Invoke(belong, parameters);
+			return memberInfo.Invoke(belong, parameters);
 		}
 
 		public object Invoke(Type[] types, params object[] parameters)
 		{
 			try
 			{
-				if (methodInfo == null || (belong == null && !methodInfo.IsStatic))
+				if (memberInfo == null || (belong == null && !memberInfo.IsStatic))
 				{
 					return null;
 				}
 				if (types == null || types.Length <= 0)
 				{
-					return methodInfo.Invoke(belong, parameters);
+					return memberInfo.Invoke(belong, parameters);
 				}
 				else
 				{
-					return methodInfo.MakeGenericMethod(types).Invoke(belong, parameters);
+					return memberInfo.MakeGenericMethod(types).Invoke(belong, parameters);
 				}
 			}
 			catch(Exception e)

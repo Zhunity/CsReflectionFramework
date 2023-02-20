@@ -8,7 +8,7 @@ namespace Hvak.Editor.Refleaction
 {
 	public sealed class REvent : RMember
 	{
-		EventInfo eventInfo;
+		protected new EventInfo memberInfo { get; set; }
 
 		public REvent(RType belongMember, string name) : base(belongMember, name)
 		{
@@ -20,35 +20,35 @@ namespace Hvak.Editor.Refleaction
 
 		public void AddEventHandler(Delegate handler)
 		{
-			if(belong == null && !eventInfo.GetAddMethod().IsStatic)
+			if(belong == null && !memberInfo.GetAddMethod().IsStatic)
 			{
 				return;
 			}
-			eventInfo.AddEventHandler(belong, handler);
+			memberInfo.AddEventHandler(belong, handler);
 		}
 
 		public void RemoveEventHandler(Delegate handler)
 		{
-			if (belong == null && !eventInfo.GetRemoveMethod().IsStatic)
+			if (belong == null && !memberInfo.GetRemoveMethod().IsStatic)
 			{
 				return;
 			}
-			eventInfo.RemoveEventHandler(belong, handler);
+			memberInfo.RemoveEventHandler(belong, handler);
 		}
 
 		protected override void SetInfo(Type belongType, string name)
 		{
-			eventInfo = belongType.GetEvent(name, flags);
+			memberInfo = belongType.GetEvent(name, flags);
 		}
 
 		protected override void SetType()
 		{
-			if (eventInfo == null)
+			if (memberInfo == null)
 			{
 				ReflectionUtils.LogError("can not find " + name);
 				return;
 			}
-			type = eventInfo.EventHandlerType;
+			type = memberInfo.EventHandlerType;
 		}
 	}
 }

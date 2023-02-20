@@ -8,7 +8,7 @@ namespace Hvak.Editor.Refleaction
 {
 	public class RField : RMember
 	{
-		FieldInfo fieldInfo;
+		protected new FieldInfo memberInfo { get; set; }
 
 		public RField(RType belongMember, string name, int genericCount = -1) : base(belongMember, name, genericCount)
 		{
@@ -31,31 +31,31 @@ namespace Hvak.Editor.Refleaction
 
 		public override void SetValue(object value)
 		{
-			if (belong == null && !fieldInfo.IsStatic)
+			if (belong == null && !memberInfo.IsStatic)
 			{
 				return;
 			}
-			fieldInfo.SetValue(belong, value);
+			memberInfo.SetValue(belong, value);
 		}
 
 		public override object GetValue()
 		{
-			return GetFieldValue(fieldInfo, belong);
+			return GetFieldValue(memberInfo, belong);
 		}
 
 		protected override void SetInfo(Type belongType, string name)
 		{
-			fieldInfo = belongType.GetField(name, flags);
+			memberInfo = belongType.GetField(name, flags);
 		}
 
 		protected override void SetType()
 		{
-			if (fieldInfo == null)
+			if (memberInfo == null)
 			{
 				ReflectionUtils.LogError("can not find " + name);
 				return;
 			}
-			type = fieldInfo.FieldType;
+			type = memberInfo.FieldType;
 		}
 	}
 }

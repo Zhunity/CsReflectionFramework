@@ -14,9 +14,10 @@ namespace Hvak.Editor.Refleaction
 	/// </summary>
 	public class RMember : RType
 	{
-		public MemberInfo memberInfo;   // 反射出来的信息
+		protected virtual MemberInfo memberInfo { get; set; }   // 反射出来的信息
 		public Type belongType;         // 在哪个类里面反射出来的成员
 		public Object belong;           // 所属的实例对象
+		public RType rBelong;			// 所属实力对象的R类型
 
 		#region 初始化类型数据
 		/// <summary>
@@ -39,19 +40,17 @@ namespace Hvak.Editor.Refleaction
 		/// 这个是递归引用时用的
 		/// 即在一个Class（or RMember）中，需要添加成员变量，调用这个接口，完成成员的绑定
 		/// </summary>
-		/// <param name="belongMember"></param>
+		/// <param name="belong"></param>
 		/// <param name="name"></param>
-		public RMember(RType belongMember, string name, int genericCount = -1, params Type[] types)
+		public RMember(RType belong, string name, int genericCount = -1, params Type[] types)
 		{
 			this.genericCount = genericCount;
 			this.types = types;
-			var belongType = belongMember?.type;
+			var belongType = belong?.type;
 			SetInfo(belongType, name);
-			SetBelongType(belongType);
 			SetName(name);
 			SetType();
-			belongMember.AddMember(this as RMember);
-			SetBelong(belongMember);
+			SetBelong(belong);
 			OnInit();
 		}
 
@@ -160,6 +159,18 @@ namespace Hvak.Editor.Refleaction
 
 		public void SetBelong(RType belong)
 		{
+			if(belong != rBelong)
+			{
+				if (!CheckCanAddMember(belong))
+				{
+					ReflectionUtils.LogError("can not loop use member");
+					return;
+				}
+				rBelong = belong;
+				SetBelongType(belong?.type);
+				belong.AddMember(this);
+			}
+
 			var obj = belong?.GetValue();
 			SetBelong(obj);
 		}
@@ -266,6 +277,20 @@ namespace Hvak.Editor.Refleaction
 				return RField.GetFieldValue(info, belong);
 			}
 			return null;
+		}
+
+		private bool CheckCanAddMember(RType belong)
+		{
+			var mbelong = belong as RMember;
+			if (mbelong?.rBelong == null || (this.memberInfo != null && this.memberInfo.MemberType != MemberTypes.Property && this.memberInfo.MemberType != MemberTypes.Field))
+			{
+				return true;
+			}
+			if (type == mbelong.type)
+			{
+				return false;
+			}
+			return mbelong.CheckCanAddMember(this);
 		}
 	}
 }

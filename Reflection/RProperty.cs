@@ -8,7 +8,7 @@ namespace Hvak.Editor.Refleaction
 {
 	public class RProperty : RMember
 	{
-		public PropertyInfo propertyInfo;
+		protected new PropertyInfo memberInfo{ get; set; }
 
 		public RProperty(RType belongMember, string name, int genericCount = -1, params Type[] types) : base(belongMember, name, genericCount, types)
 		{
@@ -51,22 +51,22 @@ namespace Hvak.Editor.Refleaction
 
 		public override void SetValue(object value)
 		{
-			if (belong == null && !propertyInfo.SetMethod.IsStatic)
+			if (belong == null && !memberInfo.SetMethod.IsStatic)
 			{
 				return;
 			}
 
-			propertyInfo.SetValue(belong, value);
+			memberInfo.SetValue(belong, value);
 		}
 
 		public override void SetValue(object value, params object[] index)
 		{
-			if (belong == null && !propertyInfo.SetMethod.IsStatic)
+			if (belong == null && !memberInfo.SetMethod.IsStatic)
 			{
 				return;
 			}
 
-			propertyInfo.SetValue(belong, value, index);
+			memberInfo.SetValue(belong, value, index);
 		}
 
 		/// <summary>
@@ -79,12 +79,12 @@ namespace Hvak.Editor.Refleaction
 		/// <returns></returns>
 		public override object GetValue()
 		{
-			return GetPropertyValue(propertyInfo, belong);
+			return GetPropertyValue(memberInfo, belong);
 		}
 
 		public override object GetValue(params object[] index)
 		{
-			return GetPropertyValue(propertyInfo, belong, index);
+			return GetPropertyValue(memberInfo, belong, index);
 		}
 
 		/// <summary>
@@ -93,22 +93,22 @@ namespace Hvak.Editor.Refleaction
 		/// <returns></returns>
 		public bool IsIndexer()
 		{
-			return propertyInfo.GetIndexParameters().Length > 0;
+			return memberInfo.GetIndexParameters().Length > 0;
 		}
 
 		protected override void SetInfo(Type belongType, string name)
 		{
-			propertyInfo = belongType.GetProperty(name, RType.flags, null, null, types, null); 
+			memberInfo = belongType.GetProperty(name, RType.flags, null, null, types, null); 
 		}
 
 		protected override void SetType()
 		{
-			if (propertyInfo == null)
+			if (memberInfo == null)
 			{
 				ReflectionUtils.LogError("can not find " + name);
 				return;
 			}
-			type = propertyInfo.PropertyType;
+			type = memberInfo.PropertyType;
 		}
 	}
 }

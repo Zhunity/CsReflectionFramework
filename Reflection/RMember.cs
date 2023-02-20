@@ -13,9 +13,9 @@ namespace Hvak.Editor.Refleaction
 	public class RMember : RType
 	{
 		protected virtual MemberInfo memberInfo { get; set; }   // 反射出来的信息
-		public Type belongType;         // 在哪个类里面反射出来的成员
-		public Object belong;           // 所属的实例对象
-		public RType rBelong;           // 所属实力对象的R类型
+		protected Type belongType;         // 在哪个类里面反射出来的成员
+		protected Object belong;           // 所属的实例对象
+		protected RType rBelong;           // 所属实力对象的R类型
 
 		#region 初始化类型数据
 		/// <summary>
@@ -161,7 +161,7 @@ namespace Hvak.Editor.Refleaction
 			{
 				if (!CheckCanAddMember(belong))
 				{
-					ReflectionUtils.LogError("can not loop use member");
+					ReflectionUtils.LogError("stack overflow. can not loop use member type");
 					return;
 				}
 				rBelong = belong;

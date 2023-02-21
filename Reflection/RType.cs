@@ -10,7 +10,8 @@ namespace Hvak.Editor.Refleaction
 	{
 		public const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
-
+		private static int _idGenerater = 0;
+		public int id;
         public string name;         // 名字（在member中相当于变量名）
 		public Type type;           // 对象的实际类型
 		public Object instance;     // 这个对象的实例
@@ -33,6 +34,7 @@ namespace Hvak.Editor.Refleaction
 
 		protected RType()
 		{
+			SetID();
 			memberList.Clear();
 		}
 
@@ -43,6 +45,7 @@ namespace Hvak.Editor.Refleaction
 		/// <param name="type"></param>
 		public RType(string type, int genericCount = -1, params Type[] types)
 		{
+			SetID();
 			this.genericCount = genericCount;
 			this.types = types;
 			this.type = ReflectionUtils.GetType(type);
@@ -57,6 +60,7 @@ namespace Hvak.Editor.Refleaction
 		/// <param name="type"></param>
 		public RType(Type type, int genericCount = -1, params Type[] types)
 		{
+			SetID();
 			this.type = type;
 			this.genericCount = genericCount;
 			this.types = types;
@@ -119,7 +123,7 @@ namespace Hvak.Editor.Refleaction
 			{
 				foreach (var member in memberList)
 				{
-					member.SetBelong(instance);
+					member.SetBelong(this);
 				}
 			}
 
@@ -200,6 +204,11 @@ namespace Hvak.Editor.Refleaction
 			{
 				ReflectionUtils.Log("Name:\t\t" + item.Name + "\nReflectedType:\t" + item.ReflectedType + "\nMemberType:\t" + item.MemberType + "\nDeclaringType:\t" + item.DeclaringType);
 			}
+		}
+
+		protected void SetID()
+		{
+			id = _idGenerater++;
 		}
 
 		/// <summary>

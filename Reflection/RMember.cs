@@ -14,8 +14,17 @@ namespace Hvak.Editor.Refleaction
 	{
 		protected virtual MemberInfo memberInfo { get; set; }   // 反射出来的信息
 		protected Type belongType;         // 在哪个类里面反射出来的成员
-		protected Object belong;           // 所属的实例对象
-		protected RType rBelong;           // 所属实力对象的R类型
+		public RType rBelong;           // 所属实力对象的R类型
+
+		/// <summary>
+		/// 所属的实例对象
+		/// </summary>
+		private Object _belong;
+		protected Object belong
+		{
+			get => _belong == null ? rBelong?.Value : _belong;
+			set => _belong = value;
+		}
 
 		#region 初始化类型数据
 		/// <summary>
@@ -136,7 +145,7 @@ namespace Hvak.Editor.Refleaction
 		/// <param name="belong"></param>
 		public void SetBelong(Object belong)
 		{
-			if (this.belong == belong)
+			if (this._belong == belong)
 			{
 				return;
 			}

@@ -145,6 +145,7 @@ namespace Hvak.Editor.Refleaction
 		/// <param name="belongMember"></param>
 		public void AddMember(RMember member)
 		{
+			ReflectionUtils.Log(this.id + " " + this.name + "  \tmember : " + member.id + " " + member.name);
 			memberList.Add(member);
 		}
 

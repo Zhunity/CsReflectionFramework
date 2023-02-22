@@ -159,6 +159,7 @@ namespace Hvak.Editor.Refleaction
 
 		public void SetBelong(RType belong)
 		{
+			ReflectionUtils.Log(this.id + "\tname : " + this.name + "\nbelong : " + belong.id + "\tname : " + belong.name + "\tvalue : " + belong.Value + "\n rbelong : " + rBelong?.id + "\tname : " + rBelong?.name + "\tvalue : " + rBelong?.Value);
 			if (belong != rBelong)
 			{
 				if (!CheckCanAddMember(belong))

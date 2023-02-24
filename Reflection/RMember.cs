@@ -149,8 +149,8 @@ namespace Hvak.Editor.Refleaction
 			{
 				return;
 			}
-			var belongType = belong.GetType();
-			if (!this.belongType.IsAssignableFrom(belongType))
+			var belongType = belong?.GetType();
+			if (belongType != null && !this.belongType.IsAssignableFrom(belongType))
 			{
 				ReflectionUtils.LogError($"{belong} is not type {this.belongType}");
 				return;

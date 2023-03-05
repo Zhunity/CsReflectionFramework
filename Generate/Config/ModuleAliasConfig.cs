@@ -7,6 +7,11 @@ namespace Hvak.Editor.Refleaction
 	{
 		static Dictionary<string, string> ModuleToAlias = new Dictionary<string, string>();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="moduleName">类型的module名， type.Module.ScopeName</param>
+		/// <param name="aliasName">dll的alias名</param>
 		public static void Set(string moduleName, string aliasName)
 		{
 			ModuleToAlias[moduleName] = aliasName;

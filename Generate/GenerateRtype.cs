@@ -10,8 +10,14 @@ using UnityEditor;
 
 namespace Hvak.Editor.Refleaction
 {
-	public partial class GenerateInput
+	/// <summary>
+	/// 生成RType的入口类型
+	/// </summary>
+	public static class GenerateRtype
 	{
+		/// <summary>
+		/// 生成代码的文件夹路径
+		/// </summary>
 		public static string UnityCSReflectionPath;
 
 		public static string GenerateDirectory
@@ -102,6 +108,10 @@ namespace Hvak.Editor.Refleaction
 		#endregion
 
 		#region 生成多个
+		/// <summary>
+		/// 根据传进来的类型，生成指定的R类
+		/// </summary>
+		/// <param name="types"></param>
 		public static void Generate(IEnumerable<Type> types)
 		{
 			ClearGenerateDirectory();
@@ -120,6 +130,10 @@ namespace Hvak.Editor.Refleaction
 #endif
 		}
 
+		/// <summary>
+		/// 根据传进来的类型名字，生成指定的R类
+		/// </summary>
+		/// <param name="types"></param>
 		public static void Generate(IEnumerable<string> types)
 		{
 			ClearGenerateDirectory();
@@ -138,6 +152,13 @@ namespace Hvak.Editor.Refleaction
 #endif
 		}
 
+		/// <summary>
+		/// 根据传进来的实例object，生成指定的R类
+		/// 传进来的是Type，就是该Type的R类型
+		/// 传进来的是string，就是该名字的R类型
+		/// 其他类型则GetType，再生成该类型
+		/// </summary>
+		/// <param name="objs"></param>
 		public static void Generate(IEnumerable<object> objs)
 		{
 			ClearGenerateDirectory();

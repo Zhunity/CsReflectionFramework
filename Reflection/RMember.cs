@@ -156,6 +156,11 @@ namespace Hvak.Editor.Refleaction
 				return;
 			}
 			this.belong = belong;
+			if(this.rBelong != null && this.rBelong.Value != this.belong)
+			{
+				ReflectionUtils.LogError($"belong is not the same value with rbelong");
+			}
+
 			if (memberList != null && memberList.Count > 0)
 			{
 				foreach (var member in memberList)

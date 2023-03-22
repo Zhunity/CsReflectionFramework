@@ -223,7 +223,7 @@ namespace Hvak.Editor.Refleaction
 
 		private static string GetPath(Type classType)
 		{
-			string path = classType.FullName.Replace(classType.Name, "");
+			string path = classType.FullName.Remove(classType.FullName.Length - classType.Name.Length);
 			var nameSpaceSplits = path.Split('.');
 			string result = GenerateDirectory;
 			// Âä†dllÂà´Âêç

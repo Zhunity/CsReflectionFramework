@@ -24,6 +24,20 @@ namespace Hvak.Editor.Refleaction
 	{
 		static private Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
 
+		public static Type GetType(Type t)
+		{
+			if (t.IsSubclassOf(typeof(RType)))
+			{
+				var typeProperty = t.GetProperty("Type", BindingFlags.Public | BindingFlags.Static);
+				var result = typeProperty.GetValue(null) as Type;
+				if(result != null)
+				{
+					return result;
+				}
+			}
+			return t;
+		}
+
 		/// <summary>
 		/// 获取类型
 		/// </summary>

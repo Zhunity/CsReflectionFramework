@@ -123,24 +123,11 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.GenericType.genericBegin = ".MakeGenericType(";
 			typeTranslater.GenericType.genericEnd = ")";
 
-			typeTranslater.GenericParameter.format = "TypeToString.GetType(typeof({0}))";
+			typeTranslater.GenericParameter.format = "ReflectionUtils.GetType(typeof({0}))";
 			typeTranslater.defaultTran = PublicToGetMethod;
 
 
 			return type.ToString(typeTranslater);
-		}
-
-		public static Type GetType(Type t)
-		{
-			if(t.IsSubclassOf(typeof(RType)))
-			{
-				var result = t.GetProperty("Type", BindingFlags.Public | BindingFlags.Static);
-				return result.GetValue(null) as Type;
-			}
-			else
-			{
-				return t;
-			}	
 		}
 
 		public static string ToFieldName(this Type type)

@@ -12,7 +12,7 @@ namespace Hvak.Editor.Refleaction
 
     public class TypeFormater
     {
-		const string defaultFormat = "{0}";
+		public const string defaultFormat = "{0}";
 
 		public bool can = true;
 		public string format = defaultFormat;
@@ -37,6 +37,38 @@ namespace Hvak.Editor.Refleaction
 		public const string GenericSuffix = @"`\d+";
 
 		public bool needDeclareTypeGeneric = false;
+
+		public string split = ", ";
+
+		public string formatDefine = defaultFormat;
+
+		public string FormatDefine(Type type, TypeTranslater translater)
+		{
+			string defineName = Regex.Replace(type.Name, GenericSuffix, string.Empty);
+			defineName = LegalNameConfig.LegalName(defineName);
+			
+			if (translater.fullName)
+			{
+				defineName = TypeToString.GetNestedFullName(type, translater, defineName);
+			}
+			defineName = string.Format(formatDefine, defineName);
+			return defineName;
+		}
+
+		public string FormatGeneric(params string[] elementStr)
+		{
+			string result = string.Empty;
+			for (int i = 0; i < elementStr.Length; i++)
+			{
+				var paramName = elementStr[i];
+				result += paramName;
+				if (i != elementStr.Length - 1)
+				{
+					result += split;
+				}
+			}
+			return result;
+		}
 	}
 
 	public class TypeTranslater
@@ -107,37 +139,11 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.fullName = false;
 			typeTranslater.Array.format = "{0}Array";
 			typeTranslater.Pointer.format = "{0}Pointer";
-			typeTranslater.GenericTypeDefinition.fun = (strs) =>
-			{
-				string genericDefine = strs[0];
-				string genericParamStr = string.Empty;
-				for(int i = 1; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += "_";
-					}
-				}
-				var a =  $"{genericDefine}_d_{genericParamStr}_p_";
-				return a;
-			};
-			typeTranslater.GenericType.fun = (strs) => {
-				string genericDefine = strs[1];
-				string genericParamStr = string.Empty;
-				for (int i = 2; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += "_";
-					}
-				}
-				var a =  $"{genericDefine}_d_{genericParamStr}_p_";
-				return a;
-			};
+			typeTranslater.GenericTypeDefinition.split = "_";
+			typeTranslater.GenericTypeDefinition.format = "{0}_d_{1}_p_";
+
+			typeTranslater.GenericType.split = "_";
+			typeTranslater.GenericType.format = "{0}_d_{1}_p_";
 
             return type.ToString(typeTranslater);
         }
@@ -492,71 +498,45 @@ namespace Hvak.Editor.Refleaction
 			// 这个要在IsGenericType前，因为IsGenericTypeDefinition也是IsGenericType
 			else if (type.IsGenericTypeDefinition && translater.GenericTypeDefinition.can)
 			{
+				string defineName = translater.GenericType.FormatDefine(type, translater);
+				string paramsStr = string.Empty;
 				var genericTypes = translater.GenericTypeDefinition.needDeclareTypeGeneric ? type.GetGenericArguments() : type.GetGenericArgumentsWithoutDeclareType();
-				string defineName = Regex.Replace(type.Name, GenericTypeFormater.GenericSuffix, string.Empty);
-				defineName = LegalNameConfig.LegalName(defineName);
 				if (genericTypes.Length > 0)
 				{
-					string[] genericParamStr = new string[genericTypes.Length + 1];
-					genericParamStr[0] = defineName;
+					string[] genericParamStr = new string[genericTypes.Length];
 					for (int i = 0; i < genericTypes.Length; i++)
 					{
-						genericParamStr[i + 1] = genericTypes[i].ToString(translater);
+						var genericType = genericTypes[i];
+						var paramName = genericType.ToString(translater);
+						genericParamStr[i] = paramName;
 					}
 
-					result = translater.GenericTypeDefinition.Format(genericParamStr);
-				}
-				else
-				{
-					result = defineName;
+					paramsStr = translater.GenericType.FormatGeneric(genericParamStr);
 				}
 
-				
-				if (needFullName)
-				{
-					return GetNestedFullName(type, translater, result); 
-				}
-				else
-				{
-					return result;
-				}
+				result = translater.GenericType.Format(defineName, paramsStr);
+				return result;
 			}
 			else if (type.IsGenericType && !type.IsGenericTypeDefinition && translater.GenericType.can)
 			{
+				string defineName = translater.GenericType.FormatDefine(type, translater);
+				string paramsStr = string.Empty;
 				// https://docs.microsoft.com/zh-cn/dotnet/framework/reflection-and-codedom/how-to-examine-and-instantiate-generic-types-with-reflection
 				var genericTypes = translater.GenericType.needDeclareTypeGeneric ? type.GetGenericArguments() : type.GetGenericArgumentsWithoutDeclareType();
-				var genericDefine = type.GetGenericTypeDefinition();
-				string defineName = Regex.Replace(type.Name, GenericTypeFormater.GenericSuffix, string.Empty);
-				defineName = LegalNameConfig.LegalName(defineName);
-
 				if (genericTypes.Length > 0)
 				{
-					string[] genericParamStr = new string[genericTypes.Length + 2];
-					genericParamStr[0] = genericDefine.ToString(translater);
-					genericParamStr[1] = defineName;
+					string[] genericParamStr = new string[genericTypes.Length];
 
 					for (int i = 0; i < genericTypes.Length; i++)
 					{
 						var genericType = genericTypes[i];
 						var paramName = genericType.ToString(translater);
-						genericParamStr[i + 2] = paramName;
+						genericParamStr[i] = paramName;
 					}
-					result = translater.GenericType.Format(genericParamStr);
+					paramsStr = translater.GenericType.FormatGeneric(genericParamStr);
 				}
-				else
-				{
-					result = defineName;
-				}
-
-
-				if (needFullName)
-				{
-					return GetNestedFullName(type, translater, result);
-				}
-				else
-				{
-					return result;
-				}
+				result = translater.GenericType.Format(defineName, paramsStr);
+				return result;
 			}
 			else if (type.IsGenericParameter && translater.GenericParameter.can)
 			{
@@ -579,7 +559,7 @@ namespace Hvak.Editor.Refleaction
 			}
 		}
 
-		static string GetNestedFullName(Type type, TypeTranslater translater, string name)
+		public static string GetNestedFullName(Type type, TypeTranslater translater, string name)
 		{
 			if (type.IsNested)
 			{

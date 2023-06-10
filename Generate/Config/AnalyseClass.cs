@@ -37,6 +37,7 @@ namespace Hvak.Editor.Refleaction
 		public const string GenericSuffix = @"`\d+";
 
 		public bool needDeclareTypeGeneric = false;
+		public bool onlyDefination = false;
 
 		public string genericBegin = "<";
 		public string genericSplit = ", ";
@@ -240,8 +241,9 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.Pointer.format = "{0}.MakePointerType()";
 			typeTranslater.ByRef.format = "{0}.MakeByRefType()";
 			typeTranslater.GenericTypeDefinition.can = false;
-			typeTranslater.GenericType.needDeclareTypeGeneric = true;
 
+			typeTranslater.GenericType.needDeclareTypeGeneric = true;
+			typeTranslater.GenericType.onlyDefination = true;
 			typeTranslater.GenericType.formatDefine.fun = PublicToGetMethod;
 			typeTranslater.GenericType.genericBegin = ".MakeGenericType(";
 			typeTranslater.GenericType.genericEnd = ")";
@@ -420,7 +422,8 @@ namespace Hvak.Editor.Refleaction
 			}
 			else if (type.IsGenericType && !type.IsGenericTypeDefinition && translater.GenericType.can)
 			{
-				string defineName = translater.GenericType.FormatDefine(type, translater);
+				var genericDefine = type.GetGenericTypeDefinition();
+				string defineName = translater.GenericType.FormatDefine(translater.GenericType.onlyDefination ? genericDefine : type, translater);
 				string paramsStr = string.Empty;
 				// https://docs.microsoft.com/zh-cn/dotnet/framework/reflection-and-codedom/how-to-examine-and-instantiate-generic-types-with-reflection
 				var genericTypes = translater.GenericType.needDeclareTypeGeneric ? type.GetGenericArguments() : type.GetGenericArgumentsWithoutDeclareType();
@@ -436,7 +439,7 @@ namespace Hvak.Editor.Refleaction
 					}
 					paramsStr = translater.GenericType.FormatGeneric(genericTypes, genericParamStr);
 				}
-				var genericDefine = type.GetGenericTypeDefinition();
+				
 				result = translater.GenericType.Format(genericDefine, defineName, paramsStr);
 				return result;
 			}

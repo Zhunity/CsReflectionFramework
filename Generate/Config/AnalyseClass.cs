@@ -8,17 +8,17 @@ using System.Text.RegularExpressions;
 namespace Hvak.Editor.Refleaction
 {
 	public delegate bool Translate(Type t, TypeTranslater translater, out string result);
-	public delegate string Format(params string[] args);
+	public delegate string Format(Type t, params string[] args);
 
     public class TypeFormater
     {
 		public const string defaultFormat = "{0}";
 
 		public bool can = true;
-		public string format = defaultFormat;
+		public virtual string format { get; set; } = defaultFormat;
 		public Format fun;
 
-		public string Format(params string[] elementStr)
+		public string Format(Type t, params string[] elementStr)
         {
 			if(!can)
 			{
@@ -26,7 +26,7 @@ namespace Hvak.Editor.Refleaction
 			}
 			if(fun != null)
 			{
-				return fun(elementStr);
+				return fun(t, elementStr);
 			}
             return string.Format(format, elementStr);
         }
@@ -38,9 +38,21 @@ namespace Hvak.Editor.Refleaction
 
 		public bool needDeclareTypeGeneric = false;
 
-		public string split = ", ";
+		public string genericBegin = "<";
+		public string genericSplit = ", ";
+		public string genericEnd = ">";
 
-		public string formatDefine = defaultFormat;
+		public override string format { get; set; } = "{0}{1}";
+
+		public TypeFormater formatDefine = new TypeFormater
+		{
+			format = defaultFormat,
+		};
+
+		public TypeFormater genericDefine = new TypeFormater
+		{
+			format = defaultFormat,
+		};
 
 		public string FormatDefine(Type type, TypeTranslater translater)
 		{
@@ -51,21 +63,25 @@ namespace Hvak.Editor.Refleaction
 			{
 				defineName = TypeToString.GetNestedFullName(type, translater, defineName);
 			}
-			defineName = string.Format(formatDefine, defineName);
+			defineName = formatDefine.Format(type, defineName);
 			return defineName;
 		}
 
-		public string FormatGeneric(params string[] elementStr)
+		public string FormatGeneric(Type[] types, params string[] elementStr)
 		{
 			string result = string.Empty;
 			for (int i = 0; i < elementStr.Length; i++)
 			{
 				var paramName = elementStr[i];
-				result += paramName;
+				result += genericDefine.Format(types[i], paramName);
 				if (i != elementStr.Length - 1)
 				{
-					result += split;
+					result += genericSplit;
 				}
+			}
+			if (elementStr.Length > 0)
+			{
+				result = $"{genericBegin}{result}{genericEnd}";
 			}
 			return result;
 		}
@@ -96,36 +112,36 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.ByRef.format = "{0}.MakeByRefType()";
 			typeTranslater.GenericTypeDefinition.can = true;
 			typeTranslater.GenericType.needDeclareTypeGeneric = true;
-			typeTranslater.GenericType.fun = (strs) =>
-			{
-				string genericDefineStr = strs[0];
-				string genericParamStr = string.Empty;
-				for (int i = 2; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				return $"{genericDefineStr}.MakeGenericType({genericParamStr})";
-			};
-			typeTranslater.GenericTypeDefinition.fun = (strs) =>
-			{
-				string genericDefineStr = strs[0];
-				string genericParamStr = string.Empty;
-				for (int i = 2; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				return $"{genericDefineStr}.MakeGenericType({genericParamStr})";
-			};
+			//typeTranslater.GenericType.fun = (strs) =>
+			//{
+			//	string genericDefineStr = strs[0];
+			//	string genericParamStr = string.Empty;
+			//	for (int i = 2; i < strs.Length; i++)
+			//	{
+			//		var paramName = strs[i];
+			//		genericParamStr += paramName;
+			//		if (i != strs.Length - 1)
+			//		{
+			//			genericParamStr += ", ";
+			//		}
+			//	}
+			//	return $"{genericDefineStr}.MakeGenericType({genericParamStr})";
+			//};
+			//typeTranslater.GenericTypeDefinition.fun = (strs) =>
+			//{
+			//	string genericDefineStr = strs[0];
+			//	string genericParamStr = string.Empty;
+			//	for (int i = 2; i < strs.Length; i++)
+			//	{
+			//		var paramName = strs[i];
+			//		genericParamStr += paramName;
+			//		if (i != strs.Length - 1)
+			//		{
+			//			genericParamStr += ", ";
+			//		}
+			//	}
+			//	return $"{genericDefineStr}.MakeGenericType({genericParamStr})";
+			//};
 			typeTranslater.GenericParameter.format = "typeof({1})";
 			typeTranslater.defaultTran = PublicToGetMethod;
 
@@ -139,13 +155,15 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.fullName = false;
 			typeTranslater.Array.format = "{0}Array";
 			typeTranslater.Pointer.format = "{0}Pointer";
-			typeTranslater.GenericTypeDefinition.split = "_";
-			typeTranslater.GenericTypeDefinition.format = "{0}_d_{1}_p_";
+			typeTranslater.GenericTypeDefinition.genericSplit = "_";
+			typeTranslater.GenericTypeDefinition.genericBegin = "_d_";
+			typeTranslater.GenericTypeDefinition.genericEnd = "_p_";
 
-			typeTranslater.GenericType.split = "_";
-			typeTranslater.GenericType.format = "{0}_d_{1}_p_";
+			typeTranslater.GenericType.genericSplit = "_";
+			typeTranslater.GenericType.genericBegin = "_d_";
+			typeTranslater.GenericType.genericEnd = "_p_";
 
-            return type.ToString(typeTranslater);
+			return type.ToString(typeTranslater);
         }
 
 		public static string ToClassName(this Type type, bool fullName = false)
@@ -154,36 +172,6 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.fullName = fullName;
 			typeTranslater.Array.format = "{0}[]";
 			typeTranslater.Pointer.format = "{0}*";
-			typeTranslater.GenericTypeDefinition.fun = (strs) => {
-				var genericDefine = strs[0];
-				string genericParamStr = string.Empty;
-				for (int i = 1; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				var defineName = $"{genericDefine}<{genericParamStr}>";
-				return defineName;
-			};
-			typeTranslater.GenericType.fun = (strs) => {
-				var genericDefine = strs[1];
-				string genericParamStr = string.Empty;
-				for (int i = 2; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				var defineName = $"{genericDefine}<{genericParamStr}>";
-				return defineName;
-			};
 
 			typeTranslater.defaultTran = VoidToDeclareName;
 
@@ -197,24 +185,7 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.fullName = false;
 			typeTranslater.Array.format = "{0}[]";
 			typeTranslater.Pointer.format = "{0}*";
-			typeTranslater.GenericTypeDefinition.fun = (strs) => {
-				return strs[0];
-			};
-			typeTranslater.GenericType.fun = (strs) => {
-				var genericDefine = strs[1];
-				string genericParamStr = string.Empty;
-				for (int i = 2; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				var defineName = $"{genericDefine}<{genericParamStr}>";
-				return defineName;
-			};
+			typeTranslater.GenericTypeDefinition.format = "{0}";
 
 			typeTranslater.defaultTran = VoidToDeclareName;
 
@@ -229,34 +200,8 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.fullName = fullName;
 			typeTranslater.Array.format = "{0}[]";
 			typeTranslater.Pointer.format = "{0}*";
-			typeTranslater.GenericTypeDefinition.fun = (strs) => {
-				var genericDefine = strs[0];
-				string genericParamStr = string.Empty;
-				for (int i = 1; i < strs.Length; i++)
-				{
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				var defineName = $"{genericDefine}<{genericParamStr}>";
-				return defineName;
-			};
-			typeTranslater.GenericType.fun = (strs) => {
-				var genericDefine = strs[1];
-				string genericParamStr = string.Empty;
-				for (int i = 2; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				var defineName = $"{genericDefine}<{genericParamStr}>";
-				return defineName;
-			};
+
+			typeTranslater.GenericTypeDefinition.genericDefine.format = "";
 
 			typeTranslater.defaultTran = VoidToDeclareName;
 
@@ -298,21 +243,7 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.ByRef.format = "{0}.MakeByRefType()";
 			typeTranslater.GenericTypeDefinition.can = false;
 			typeTranslater.GenericType.needDeclareTypeGeneric = true;
-			typeTranslater.GenericType.fun = (strs) =>
-			{
-				string genericDefineStr = strs[0];
-				string genericParamStr = string.Empty;
-				for (int i = 2; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				return $"{genericDefineStr}.MakeGenericType({genericParamStr})";
-			};
+			typeTranslater.GenericType.format = "{0}<{1}>";
 			typeTranslater.GenericParameter.format = "Type.MakeGenericMethodParameter({1})";
 			typeTranslater.defaultTran = PublicToGetMethod;
 
@@ -415,38 +346,7 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.fullName = true;
 			typeTranslater.Array.format = prefix + "Array<{0}>";
 			typeTranslater.Pointer.format = prefix + "Pointer<{0}>";
-			typeTranslater.GenericTypeDefinition.fun = (strs) =>
-			{
-				var genericDefine = strs[0];
-				string genericParamStr = string.Empty;
-				for (int i = 1; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				var defineName = $"{genericDefine}<{genericParamStr}>";
-				return defineName;
-			};
-			typeTranslater.GenericType.fun = (strs) =>
-			{
-				var genericDefine = strs[1];
-				string genericParamStr = string.Empty;
-				for (int i = 2; i < strs.Length; i++)
-				{
-					var paramName = strs[i];
-					genericParamStr += paramName;
-					if (i != strs.Length - 1)
-					{
-						genericParamStr += ", ";
-					}
-				}
-				var defineName = $"{genericDefine}<{genericParamStr}>";
-				return defineName;
-			};
+
 			typeTranslater.GenericParameter.format = prefix;
 			typeTranslater.translate = TranslaterRType;
 
@@ -483,22 +383,22 @@ namespace Hvak.Editor.Refleaction
 			else if (type.IsArray && translater.Array.can)
 			{
 				var elementType = type.GetElementType();
-				return translater.Array.Format(elementType.ToString(translater));
+				return translater.Array.Format(elementType, elementType.ToString(translater));
 			}
 			else if (type.IsPointer && translater.Pointer.can)
 			{
 				var elementType = type.GetElementType();
-				return translater.Pointer.Format(elementType.ToString(translater));
+				return translater.Pointer.Format(elementType, elementType.ToString(translater));
 			}
 			else if (type.IsByRef && translater.ByRef.can)
 			{
 				var elementType = type.GetElementType();
-				return translater.ByRef.Format(elementType.ToString(translater));
+				return translater.ByRef.Format(elementType, elementType.ToString(translater));
 			}
 			// 这个要在IsGenericType前，因为IsGenericTypeDefinition也是IsGenericType
 			else if (type.IsGenericTypeDefinition && translater.GenericTypeDefinition.can)
 			{
-				string defineName = translater.GenericType.FormatDefine(type, translater);
+				string defineName = translater.GenericTypeDefinition.FormatDefine(type, translater);
 				string paramsStr = string.Empty;
 				var genericTypes = translater.GenericTypeDefinition.needDeclareTypeGeneric ? type.GetGenericArguments() : type.GetGenericArgumentsWithoutDeclareType();
 				if (genericTypes.Length > 0)
@@ -511,10 +411,10 @@ namespace Hvak.Editor.Refleaction
 						genericParamStr[i] = paramName;
 					}
 
-					paramsStr = translater.GenericType.FormatGeneric(genericParamStr);
+					paramsStr = translater.GenericTypeDefinition.FormatGeneric(genericTypes, genericParamStr);
 				}
 
-				result = translater.GenericType.Format(defineName, paramsStr);
+				result = translater.GenericTypeDefinition.Format(type, defineName, paramsStr);
 				return result;
 			}
 			else if (type.IsGenericType && !type.IsGenericTypeDefinition && translater.GenericType.can)
@@ -533,14 +433,15 @@ namespace Hvak.Editor.Refleaction
 						var paramName = genericType.ToString(translater);
 						genericParamStr[i] = paramName;
 					}
-					paramsStr = translater.GenericType.FormatGeneric(genericParamStr);
+					paramsStr = translater.GenericType.FormatGeneric(genericTypes, genericParamStr);
 				}
-				result = translater.GenericType.Format(defineName, paramsStr);
+				var genericDefine = type.GetGenericTypeDefinition();
+				result = translater.GenericType.Format(genericDefine, defineName, paramsStr);
 				return result;
 			}
 			else if (type.IsGenericParameter && translater.GenericParameter.can)
 			{
-				return translater.GenericParameter.Format(LegalNameConfig.LegalName(type.Name), type.GenericParameterPosition.ToString());
+				return translater.GenericParameter.Format(type, LegalNameConfig.LegalName(type.Name), type.GenericParameterPosition.ToString());
 			}
 			else if (translater.defaultTran != null && translater.defaultTran(type, translater, out result))
 			{

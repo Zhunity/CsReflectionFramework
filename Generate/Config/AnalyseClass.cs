@@ -223,15 +223,20 @@ namespace Hvak.Editor.Refleaction
 
 		static bool PublicToGetMethod(Type t, TypeTranslater translater, out string result)
 		{
+			result = PublicToGetMethod(t);
+			return true;
+		}
+
+		static string PublicToGetMethod(Type t, params string[] args)
+		{
 			if (t.IsPublic)
 			{
-				result = $"typeof({t.ToDeclareName(true)})";
+				return $"typeof({t.ToDeclareName(true)})";
 			}
 			else
 			{
-				result = $" ReflectionUtils.GetType(\"{t.GetFullName()}\")";
+				return $" ReflectionUtils.GetType(\"{t.GetFullName()}\")";
 			}
-			return true;
 		}
 
 		public static string ToGetMethod(this Type type)
@@ -243,7 +248,10 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.ByRef.format = "{0}.MakeByRefType()";
 			typeTranslater.GenericTypeDefinition.can = false;
 			typeTranslater.GenericType.needDeclareTypeGeneric = true;
-			typeTranslater.GenericType.format = "{0}<{1}>";
+
+			typeTranslater.GenericType.formatDefine.fun = PublicToGetMethod;
+			typeTranslater.GenericType.genericBegin = ".MakeGenericType(";
+			typeTranslater.GenericType.genericEnd = ")";
 			typeTranslater.GenericParameter.format = "Type.MakeGenericMethodParameter({1})";
 			typeTranslater.defaultTran = PublicToGetMethod;
 

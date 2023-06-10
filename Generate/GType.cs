@@ -105,7 +105,7 @@ namespace Hvak.Editor.Refleaction
             string externAliasName = GetExternlAiasName();
             string delcareStr = GetMemberDeclareStr();
             string methodInvoke = GetMethodInvokeStr();
-            #region Ƕ���ࣿ
+            #region nestType
             Type declaringType = type.DeclaringType;
             var nestedTypeDefine = "";
             while (declaringType != null)
@@ -118,7 +118,7 @@ namespace Hvak.Editor.Refleaction
             }
             #endregion
 
-            #region ����Լ��
+            #region generic Type
             var genericArgsConstraints = string.Empty;
             foreach (var genericArg in genericArgs)
             {

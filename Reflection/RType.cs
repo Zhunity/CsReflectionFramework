@@ -13,7 +13,7 @@ namespace Hvak.Editor.Refleaction
 		private static int _idGenerater = 0;
 		public int id;
         public string name;         // 名字（在member中相当于变量名）
-		public virtual Type type { get; private set; }           // 对象的实际类型
+		public virtual Type type { get; protected set; }           // 对象的实际类型
 		public Object instance;     // 这个对象的实例
 
 		protected int genericCount = -1;

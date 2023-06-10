@@ -12,6 +12,7 @@ namespace Hvak.Editor.Refleaction
 		public static HashSet<Type> BlackTypes = new HashSet<Type>()
 		{
 			typeof(void),
+			ReflectionUtils.GetType("System.Threading.Lock"),
 		};
 
 		public static void AddBlackType(Type type) 

@@ -37,7 +37,7 @@ namespace Hvak.Editor.Refleaction
             }
 
             HashSet<MethodInfo> getSetHash = new HashSet<MethodInfo>();
-            // ��Ϊevent���fieldͬ�����Ȼ�ȡevent��
+            // event 也會生成field？印象中是這樣
             var events = type.GetEvents(RType.flags);
             foreach (var @event in events)
             {
@@ -48,7 +48,7 @@ namespace Hvak.Editor.Refleaction
                 string name = gEvent.GetDeclareName();
                 if (!this.events.TryAdd(name, gEvent) || !this.members.TryAdd(name, gEvent))
                 {
-                    ReflectionUtils.Log(type.Name + "����eventsʧ��:" + name + "  " + this.events[name] + " " + this.members[name]);
+                    ReflectionUtils.Log(type.Name + "重複 event:" + name + "  " + this.events[name] + " " + this.members[name]);
                 }
             }
 
@@ -59,7 +59,7 @@ namespace Hvak.Editor.Refleaction
                 string name = gField.GetDeclareName();
                 if (!this.fields.TryAdd(name, gField) || !this.members.TryAdd(name, gField))
                 {
-                    ReflectionUtils.Log(type.Name + "����fieldʧ��:" + name);
+                    ReflectionUtils.Log(type.Name + "重复field:" + name);
                 }
             }
 
@@ -73,7 +73,7 @@ namespace Hvak.Editor.Refleaction
                 string name = gProperty.GetDeclareName();
                 if (!this.properties.TryAdd(name, gProperty) || !this.members.TryAdd(name, gProperty))
                 {
-                    ReflectionUtils.Log(type.Name + "����propertiesʧ��:" + name);
+                    ReflectionUtils.Log(type.Name + "重复properties:" + name);
                 }
             }
 
@@ -90,7 +90,7 @@ namespace Hvak.Editor.Refleaction
                 string name = gMethod.GetDeclareName();
                 if (!this.methods.TryAdd(name, gMethod) || !this.members.TryAdd(name, gMethod))
                 {
-                    ReflectionUtils.Log(type.Name + "����methodsʧ��:" + name);
+                    ReflectionUtils.Log(type.Name + "重复methods:" + name);
                 }
             }
 
@@ -140,7 +140,13 @@ namespace Hvak.Editor.Refleaction{GetNameSpace()}
 	/// </summary>
     public partial class R{type.ToClassName()} : RMember //{genericArgsConstraints}
     {{
-{delcareStr}
+        public static Type Type
+        {{
+            get
+            {{
+                return {type.ToGetMethod()};
+            }}
+        }}
 
         public R{type.ToConstructorName()}() : base(""{type.GetFullName()}"")
         {{
@@ -158,6 +164,8 @@ namespace Hvak.Editor.Refleaction{GetNameSpace()}
 		 public R{type.ToConstructorName()}(Type belongType, string name, int genericCount = -1, params Type[] types) : base(belongType, name, genericCount, types)
 	    {{
 	    }}
+
+{delcareStr}
 {methodInvoke}
     }}
 }}

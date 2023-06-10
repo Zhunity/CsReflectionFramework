@@ -144,7 +144,7 @@ namespace Hvak.Editor.Refleaction{GetNameSpace()}
         {{
             get
             {{
-                return {type.ToGetMethod()};
+                return {type.ToGetType()};
             }}
         }}
 

@@ -54,9 +54,54 @@ namespace Hvak.Editor.Refleaction
 
     public static class TypeToString
     {
-        
 
-        public static string ToFieldName(this Type type)
+		public static string ToGetType(this Type type)
+		{
+			TypeTranslater typeTranslater = new TypeTranslater();
+			typeTranslater.fullName = true;
+			typeTranslater.Array.format = "{0}.MakeArrayType()";
+			typeTranslater.Pointer.format = "{0}.MakePointerType()";
+			typeTranslater.ByRef.format = "{0}.MakeByRefType()";
+			typeTranslater.GenericTypeDefinition.can = true;
+			typeTranslater.GenericType.needDeclareTypeGeneric = true;
+			typeTranslater.GenericType.fun = (strs) =>
+			{
+				string genericDefineStr = strs[0];
+				string genericParamStr = string.Empty;
+				for (int i = 2; i < strs.Length; i++)
+				{
+					var paramName = strs[i];
+					genericParamStr += paramName;
+					if (i != strs.Length - 1)
+					{
+						genericParamStr += ", ";
+					}
+				}
+				return $"{genericDefineStr}.MakeGenericType({genericParamStr})";
+			};
+			typeTranslater.GenericTypeDefinition.fun = (strs) =>
+			{
+				string genericDefineStr = strs[0];
+				string genericParamStr = string.Empty;
+				for (int i = 2; i < strs.Length; i++)
+				{
+					var paramName = strs[i];
+					genericParamStr += paramName;
+					if (i != strs.Length - 1)
+					{
+						genericParamStr += ", ";
+					}
+				}
+				return $"{genericDefineStr}.MakeGenericType({genericParamStr})";
+			};
+			typeTranslater.GenericParameter.format = "typeof({1})";
+			typeTranslater.defaultTran = PublicToGetMethod;
+
+
+			return type.ToString(typeTranslater);
+		}
+
+		public static string ToFieldName(this Type type)
         {
 			TypeTranslater typeTranslater = new TypeTranslater();
 			typeTranslater.fullName = false;

@@ -44,8 +44,23 @@ namespace Hvak.Editor.Refleaction
 			}
 		}
 
-		public static string LegalName(string str)
+		public static bool IsLegalName(string str)
 		{
+			if(string.IsNullOrEmpty(str))
+			{
+				return false;
+			}
+			var matches = Regex.Matches(str, @"\W");
+			return (matches == null || matches.Count <= 0);
+		}
+
+		public static string LegalName(string str, bool need = true)
+		{
+			if(!need)
+			{
+				return str;
+			}
+
 			if(string.IsNullOrEmpty(str))
 			{
 				return "_______";

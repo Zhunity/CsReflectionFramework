@@ -58,7 +58,7 @@ namespace Hvak.Editor.Refleaction
 		public string FormatDefine(Type type, TypeTranslater translater)
 		{
 			string defineName = Regex.Replace(type.Name, GenericSuffix, string.Empty);
-			defineName = LegalNameConfig.LegalName(defineName);
+			defineName = LegalNameConfig.LegalName(defineName, translater.legalName);
 			
 			if (translater.fullName)
 			{
@@ -90,6 +90,7 @@ namespace Hvak.Editor.Refleaction
 
 	public class TypeTranslater
     {
+		public bool legalName = true;
 		public bool fullName;
 		public Translate translate;
 		public TypeFormater Array = new TypeFormater();
@@ -108,6 +109,7 @@ namespace Hvak.Editor.Refleaction
 		{
 			TypeTranslater typeTranslater = new TypeTranslater();
 			typeTranslater.fullName = false;
+			typeTranslater.legalName = false;
 			typeTranslater.Array.format = "{0}.MakeArrayType()";
 			typeTranslater.Pointer.format = "{0}.MakePointerType()";
 			typeTranslater.ByRef.format = "{0}.MakeByRefType()";
@@ -123,11 +125,22 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.GenericType.genericBegin = ".MakeGenericType(";
 			typeTranslater.GenericType.genericEnd = ")";
 
-			typeTranslater.GenericParameter.format = "ReflectionUtils.GetType(typeof({0}))";
+			typeTranslater.GenericParameter.fun = PublicToGetMethod;
 			typeTranslater.defaultTran = PublicToGetMethod;
 
 
 			return type.ToString(typeTranslater);
+		}
+
+		static bool GetReflectionType(Type t, TypeTranslater translater, out string result)
+		{
+			result = GetReflectionType(t);
+			return true;
+		}
+
+		static string GetReflectionType(Type t, params string[] args)
+		{
+			return $" ReflectionUtils.GetType(\"{t.GetFullName()}\")";
 		}
 
 		public static string ToFieldName(this Type type)
@@ -210,7 +223,7 @@ namespace Hvak.Editor.Refleaction
 
 		static string PublicToGetMethod(Type t, params string[] args)
 		{
-			if (t.IsPublic)
+			if (t.IsPublic() && t.IsLegal())
 			{
 				return $"typeof({t.ToDeclareName(true)})";
 			}
@@ -360,6 +373,7 @@ namespace Hvak.Editor.Refleaction
 		public static string ToString(this Type type, TypeTranslater translater)
 		{
 			bool needFullName = translater.fullName;
+			bool needLegalName = translater.legalName;
 
 
             if (translater.translate != null && translater.translate(type, translater, out string result))
@@ -432,7 +446,7 @@ namespace Hvak.Editor.Refleaction
 			}
 			else if (type.IsGenericParameter && translater.GenericParameter.can)
 			{
-				return translater.GenericParameter.Format(type, LegalNameConfig.LegalName(type.Name), type.GenericParameterPosition.ToString());
+				return translater.GenericParameter.Format(type, LegalNameConfig.LegalName(type.Name, needLegalName), type.GenericParameterPosition.ToString());
 			}
 			else if (translater.defaultTran != null && translater.defaultTran(type, translater, out result))
 			{
@@ -442,11 +456,11 @@ namespace Hvak.Editor.Refleaction
 			{
 				if (needFullName)
 				{
-					return GetNestedFullName(type, translater, LegalNameConfig.LegalName(type.Name));
+					return GetNestedFullName(type, translater, LegalNameConfig.LegalName(type.Name, needLegalName));
 				}
 				else
 				{
-					return LegalNameConfig.LegalName(type.Name);
+					return LegalNameConfig.LegalName(type.Name, needLegalName);
 				}
 			}
 		}
@@ -472,7 +486,7 @@ namespace Hvak.Editor.Refleaction
                     var nameSpaceSplit = type.Namespace.Split(".");
                     foreach (var item in nameSpaceSplit)
                     {
-                        result += LegalNameConfig.LegalName(item) + ".";
+                        result += LegalNameConfig.LegalName(item, translater.legalName) + ".";
                     }
                 }
 				
@@ -488,6 +502,20 @@ namespace Hvak.Editor.Refleaction
 			foreach(var refType in refTypes)
 			{
 				if(!refType.IsPublic)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public static bool IsLegal(this Type type)
+		{
+			HashSet<Type> refTypes = new HashSet<Type>();
+			type.GetRefType(ref refTypes);
+			foreach (var refType in refTypes)
+			{
+				if (!LegalNameConfig.IsLegalName(type.Name))
 				{
 					return false;
 				}

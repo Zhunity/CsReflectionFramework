@@ -125,7 +125,7 @@ namespace Hvak.Editor.Refleaction
 			typeTranslater.GenericType.genericBegin = ".MakeGenericType(";
 			typeTranslater.GenericType.genericEnd = ")";
 
-			typeTranslater.GenericParameter.fun = PublicToGetMethod;
+			typeTranslater.GenericParameter.format = "ReflectionUtils.GetType(typeof({0}))";
 			typeTranslater.defaultTran = PublicToGetMethod;
 
 
@@ -446,7 +446,7 @@ namespace Hvak.Editor.Refleaction
 			}
 			else if (type.IsGenericParameter && translater.GenericParameter.can)
 			{
-				return translater.GenericParameter.Format(type, LegalNameConfig.LegalName(type.Name, needLegalName), type.GenericParameterPosition.ToString());
+				return translater.GenericParameter.Format(type, LegalNameConfig.LegalName(type.Name), type.GenericParameterPosition.ToString());
 			}
 			else if (translater.defaultTran != null && translater.defaultTran(type, translater, out result))
 			{

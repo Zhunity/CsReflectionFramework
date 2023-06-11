@@ -24,6 +24,11 @@ namespace Hvak.Editor.Refleaction
 	{
 		static private Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
 
+		public static Type GetType<T>()
+		{
+			return GetType(typeof(T));
+		}
+
 		public static Type GetType(Type t)
 		{
 			if (t.IsSubclassOf(typeof(RType)))

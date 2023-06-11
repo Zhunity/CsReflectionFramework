@@ -13,6 +13,7 @@ namespace Hvak.Editor.Refleaction
 		{
 			typeof(void),
 			ReflectionUtils.GetType("System.Threading.Lock"),
+			ReflectionUtils.GetType("System.Runtime.Serialization.DeserializationToken"),
 		};
 
 		public static void AddBlackType(Type type) 

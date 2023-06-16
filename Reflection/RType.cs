@@ -161,11 +161,6 @@ namespace Hvak.Editor.Refleaction
 			return null;
 		}
 
-		public object ConvertObject(Type type)
-		{
-			return ReflectionUtils.ConvertObject(Value, type);
-		}
-
 		public RMember CreateMember(string name)
 		{
 			return new RMember(this, name);

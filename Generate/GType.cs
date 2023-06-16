@@ -136,6 +136,7 @@ namespace Hvak.Editor.Refleaction{GetNameSpace()}
 
             string curType = $@"
 	/// <summary>
+    /// https://github.com/Zhunity/UnityCsReflection
 	/// {type.GetFullName()}
 	/// </summary>
     public partial class R{type.ToClassName()} : RMember //{genericArgsConstraints}

@@ -188,19 +188,15 @@ namespace Hvak.Editor.Refleaction
 				{
 					return $"return ({returnTypeStr})Pointer.Unbox(___result);";
 				}
-				else
-				{
-					return $"return ({returnTypeStr})___result;";
-				}
 
 			}
 			else
 			{
 				returnTypeStr = returnType.ToRtypeString("Type");
-				return $"return new {returnTypeStr}(___result);";
+				
 			}
 
-			
+			return $"return ReflectionUtils.Convert<{returnTypeStr}>(___result);";
 		}
 	}
 }

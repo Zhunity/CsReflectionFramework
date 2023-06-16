@@ -161,12 +161,12 @@ namespace Hvak.Editor.Refleaction
 				}
 				else
 				{
-					outAssignStr = $"\t\t\t{paramName} = ({paramType.ToClassName(true)})___parameters[{parameter.Position}];\n";
+					outAssignStr = $"\t\t\t{paramName} = ReflectionUtils.Convert<{paramType.ToClassName(true)}>(___parameters[{parameter.Position}]);\n";
 				}
 			}
 			else
 			{
-				outAssignStr = $"\t\t\t{paramName} = new {paramType.ToRtypeString("Type")}(___parameters[{parameter.Position}]);\n";
+				outAssignStr = $"\t\t\t{paramName} = ReflectionUtils.Convert<{paramType.ToRtypeString("Type")}>(___parameters[{parameter.Position}]);\n";
 			}
 
 			return outAssignStr;

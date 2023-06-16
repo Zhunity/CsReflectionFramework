@@ -6,8 +6,10 @@ namespace Hvak.Editor.Refleaction
 {
 	/// <summary>
 	/// 黑名单
+	/// TODO 和CanNotConvertToObjectsConfig合并一下
+	/// TODO 像DeserializationToken这种又没有，又public的，这时候要怎么处理
 	/// </summary>
-    public class BlackTypeConfig
+	public class BlackTypeConfig
     {
 		public static HashSet<Type> BlackTypes = new HashSet<Type>()
 		{

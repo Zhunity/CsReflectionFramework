@@ -617,5 +617,22 @@ namespace Hvak.Editor.Refleaction
 			}
 			return type.FullName;
 		}
+
+		public static string GetBasePath(this Type type)
+		{
+			if(type == null)
+			{
+				return string.Empty;
+			}
+			string path = "";
+			var baseType = type;
+			do
+			{
+				path = baseType.GetFullName() + "/" + path;
+				baseType = baseType.BaseType;
+			}
+			while (baseType != null);
+			return path;
+		}
 	}
 }

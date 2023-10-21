@@ -1,0 +1,1 @@
+1、类里面也可以用Dictionary<string, RTYpe> 缓存，也可以用this【】表示
